@@ -6,8 +6,9 @@ applications:
   path: build/libs/databackend.jar
   buildpack: https://github.com/cloudfoundry/java-buildpack.git
   services:
-    - mycdh
-    - myzookeeper-wssb
+    - kerberos-service
+    - myhdfs
+    - myhbase
     - dashboard-endpoint-ups
     - installer-backend-user-credentials-ups
   env:

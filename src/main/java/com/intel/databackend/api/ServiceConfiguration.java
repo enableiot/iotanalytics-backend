@@ -20,9 +20,7 @@ import static org.springframework.context.annotation.ScopedProxyMode.TARGET_CLAS
 import com.intel.databackend.api.inquiry.advanced.AdvancedDataInquiryService;
 import com.intel.databackend.api.inquiry.basic.BasicDataInquiryService;
 import com.intel.databackend.config.DashboardCredentialsProvider;
-import com.intel.databackend.config.ZookeeperCredentialsProvider;
 import com.intel.databackend.config.cloudfoundry.DashboardEndpointConfig;
-import com.intel.databackend.config.cloudfoundry.ZookeeperConfig;
 import com.intel.databackend.datasources.dashboard.auth.AuthApi;
 import com.intel.databackend.datasources.dashboard.auth.AuthRestApi;
 import com.intel.databackend.datasources.dashboard.components.ComponentsDao;
@@ -50,11 +48,6 @@ public class ServiceConfiguration {
     }
 
     @Bean
-    public ZookeeperCredentialsProvider zookeeperCredentialsProvider() {
-        return new ZookeeperConfig();
-    }
-
-    @Bean
     public DeviceDao deviceDao(DashboardCredentialsProvider dashboardCredentialsProvider, AuthApi authApi) throws VcapEnvironmentException {
         return new DeviceRestApi(dashboardCredentialsProvider, authApi);
     }
@@ -65,8 +58,8 @@ public class ServiceConfiguration {
     }
 
     @Bean
-    public DataDao dataDao(ZookeeperCredentialsProvider zookeeperCredentialsProvider) {
-        return new DataHbaseDao(zookeeperCredentialsProvider, hbasePrefix);
+    public DataDao dataDao() {
+        return new DataHbaseDao(hbasePrefix);
     }
 
     @Bean
