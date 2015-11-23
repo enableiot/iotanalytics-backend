@@ -43,36 +43,48 @@ public class SampleAggregationDataRetriever implements SampleDataRetriever {
 
     @Override
     public List<List<String>> get(Observation[] observations, Long first, Long last) {
+        //group by timestamp bucket and count averages in each bucket.
+        //Stream based solution could be easier to parallelize (and read).
+
         List<List<String>> sampleObservationList = new ArrayList<>();
-        // FIXME - naive, non-optimal - iterates multiple times
-        for (long i = startDate; i <= endDate /* FIXME - rounding error compensation? */; i += bucketTimePeriod) {
-            logger.debug("bucketing between {} and {}", i, (i + bucketTimePeriod));
-            double sumValue = 0.0;
-            long sumTime = 0L;
-            long count = 0L;
-            for (Observation observation : observations) {
-                if (observation.getOn() >= i && observation.getOn() < i + bucketTimePeriod) {
-                    sumValue = updateSum(sumValue, observation);
-                    sumTime += observation.getOn();
-                    count++;
-                }
-            }
-            if (count > 0) {
-                Double avgValue = sumValue / count;
-                Long avgTime = sumTime / count;
-                logger.debug("Avgs for bucket for component are: value={} time={} count={}", avgValue, avgTime, count);
-                List<String> samples = new ArrayList<>();
+        if(observations.length == 0) {
+            return sampleObservationList;
+        }
+        double sumValue = 0.0;
+        long sumTime = 0L;
+        long count = 0L;
+        long previousBucket = (observations[0].getOn() - startDate) / bucketTimePeriod;
+        for (Observation observation : observations) {
+            long curBucket = (observation.getOn() - startDate) / bucketTimePeriod;
+            if(curBucket == previousBucket) {
+                sumValue = updateSum(sumValue, observation);
+                sumTime += observation.getOn();
+                count++;
+            } else {
+                createSample(sumValue, sumTime, count, sampleObservationList);
 
-                samples.add(avgTime.toString());
-                samples.add(avgValue.toString());
-
-                sampleObservationList.add(samples);
+                //this is the first value of the next bucket
+                previousBucket = curBucket;
+                sumValue = updateSum(0, observation);
+                sumTime = observation.getOn();
+                count = 1;
             }
         }
+        //last bucket
+        createSample(sumValue, sumTime, count, sampleObservationList);
 
         return sampleObservationList;
     }
 
+    private void createSample(double sumValue, long sumTime, long count, List<List<String>> sampleObservationList) {
+        double avgValue = sumValue / count;
+        long avgTime = sumTime / count;
+        logger.debug("Avgs for bucket for component are: value={} time={} count={}", avgValue, avgTime, count);
+        List<String> samples = new ArrayList<>();
+        samples.add(String.valueOf(avgTime));
+        samples.add(String.valueOf(avgValue));
+        sampleObservationList.add(samples);
+    }
 
     private static double updateSum(double sumValue, Observation o) {
         try {
