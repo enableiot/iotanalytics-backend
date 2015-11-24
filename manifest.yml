@@ -1,0 +1,14 @@
+---
+applications:
+- name: installer-backend
+  memory: 1024M
+  instances: 1
+  path: build/libs/databackend.jar
+  buildpack: https://github.com/cloudfoundry/java-buildpack.git
+  services:
+    - mycdh
+    - myzookeeper-wssb
+    - dashboard-endpoint-ups
+    - installer-backend-user-credentials-ups
+  env:
+    VERSION: "0.15.0"

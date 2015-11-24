@@ -1,0 +1,11 @@
+*.class
+.gradle/*
+build/
+/bin/
+.classpath
+.project
+.settings
+.idea/
+databackend.iml
+*.log
+*.swp
