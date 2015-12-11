@@ -14,12 +14,14 @@ You can find dashboard API documentation for Data API on pages:
 
 1. Gradle 2.4
 2. Java 1.8
+3. Cloud Foundry CLI and Trusted Analytics Platform account (https://github.com/trustedanalytics)
+
 
 ## Deployment manual
 
-#### On Cloud Foundry 
+#### On Trusted Analytics Platform (https://github.com/trustedanalytics)
 
-To install AA backend in your cloud foundry space login to CF and execute:
+To install AA backend in your Trusted Analytics Platform space, login into TAP and execute:
 
 1. Create instances with specified name for each of required services from marketplace:
 
