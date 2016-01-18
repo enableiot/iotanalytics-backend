@@ -1,3 +1,0 @@
-kafka:
-  enabled: true
-  topic: "metrics"

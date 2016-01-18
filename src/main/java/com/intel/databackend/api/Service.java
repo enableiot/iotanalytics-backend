@@ -19,8 +19,8 @@ import com.intel.databackend.exceptions.ServiceException;
  */
 public interface Service<Request, Response> {
 
-    public Service withParams(String accountId, Request request);
+    Service withParams(String accountId, Request request);
 
-    public Response invoke() throws ServiceException;
+    Response invoke() throws ServiceException;
 
 }

@@ -21,16 +21,17 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
-
+@Component
 public class VcapReader
 {
     private static final Logger logger = LoggerFactory.getLogger(VcapReader.class);
 
-    private static final String VCAP_SERVICES = "VCAP_SERVICES";
-    private static final String USER_PROVIDED = "user-provided";
-    private static final String CREDENTIALS = "credentials";
-    private static final String NAME = "name";
+    public static final String VCAP_SERVICES = "VCAP_SERVICES";
+    public static final String USER_PROVIDED = "user-provided";
+    public static final String CREDENTIALS = "credentials";
+    public static final String NAME = "name";
 
 
     private final String vcapServices;
@@ -65,6 +66,17 @@ public class VcapReader
         } catch (JSONException e) {
             logger.warn("Cannot find user provided service - {} in VCAP_SERVICES",  name);
             logger.warn(e.getMessage());
+        }
+        return null;
+    }
+
+    public JSONObject getVcapServiceByType(String type) {
+        try {
+            if (vcapServices != null) {
+                return new JSONObject(vcapServices).getJSONArray(type).getJSONObject(0);
+            }
+        } catch (JSONException e) {
+            logger.warn("Cannot find service of type - {} in VCAP_SERVICES", type);
         }
         return null;
     }

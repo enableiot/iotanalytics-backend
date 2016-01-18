@@ -53,6 +53,7 @@ public class DataSubmissionService implements Service<DataSubmissionRequest, Dat
         }
         for (Observation o : request.getData()) {
             o.setAid(accountId);
+            o.setSystemOn(this.request.getSystemOn());
         }
 
         dataDao.put(request.getData().toArray(new Observation[request.getData().size()]));

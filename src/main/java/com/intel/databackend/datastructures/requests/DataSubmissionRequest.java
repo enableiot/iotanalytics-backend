@@ -29,6 +29,7 @@ public class DataSubmissionRequest {
     private String did;
     private Long on;
     private Long count;
+    private Long systemOn;
     private List<Observation> data =  null;
 
     public String getAccountId() {
@@ -61,6 +62,14 @@ public class DataSubmissionRequest {
 
     public void setCount(Long count) {
         this.count = count;
+    }
+
+    public Long getSystemOn() {
+        return systemOn;
+    }
+
+    public void setSystemOn(Long systemOn) {
+        this.systemOn = systemOn;
     }
 
     public List<Observation> getData() {

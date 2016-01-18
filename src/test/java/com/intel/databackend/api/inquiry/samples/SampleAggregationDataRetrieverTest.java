@@ -19,11 +19,11 @@ package com.intel.databackend.api.inquiry.samples;
 import com.intel.databackend.api.inquiry.DataRetrieveParams;
 import com.intel.databackend.datastructures.Observation;
 import com.intel.databackend.datastructures.requests.DataInquiryRequest;
+import org.junit.Test;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
+
+import static org.junit.Assert.assertEquals;
 
 
 public class SampleAggregationDataRetrieverTest {
@@ -31,12 +31,12 @@ public class SampleAggregationDataRetrieverTest {
     @Test
     public void get_maxPointsSmallerThanAllObservations_returnsAveragedObservations() {
         //ARRANGE
-        Observation[] observations = {new Observation("aid", "cid", 10l, "200.0"), new Observation("aid", "cid", 11l, "201.0"),
-            new Observation("aid", "cid", 12l, "202.0"), new Observation("aid", "cid", 13l, "203.0")};
+        Observation[] observations = {new Observation("aid", "cid", 10L, "200.0"), new Observation("aid", "cid", 11L, "201.0"),
+            new Observation("aid", "cid", 12L, "202.0"), new Observation("aid", "cid", 13L, "203.0")};
         DataInquiryRequest dataInquiryRequest = new DataInquiryRequest();
-        dataInquiryRequest.setStartDate(10l);
-        dataInquiryRequest.setEndDate(14l);
-        dataInquiryRequest.setMaxPoints(2l);
+        dataInquiryRequest.setStartDate(10L);
+        dataInquiryRequest.setEndDate(14L);
+        dataInquiryRequest.setMaxPoints(2L);
         DataRetrieveParams params = new DataRetrieveParams(dataInquiryRequest, null);
         SampleAggregationDataRetriever instance = new SampleAggregationDataRetriever(params);
 
@@ -45,17 +45,17 @@ public class SampleAggregationDataRetrieverTest {
 
         //ASSERT
         //values are averaged in each bucket
-        assertThat(result, is(Arrays.asList(Arrays.asList("10", "200.5"), Arrays.asList("12", "202.5"))));
+        assertEquals(result, Arrays.asList(Arrays.asList("10", "200.5"), Arrays.asList("12", "202.5")));
     }
     
     @Test
     public void get_maxPointsLargerThanTimespan_samplesEveryMillisecond() {
         //ARRANGE
-        Observation[] observations = {new Observation("aid", "cid", 10l, "200.0"), new Observation("aid", "cid", 11l, "201.0")};
+        Observation[] observations = {new Observation("aid", "cid", 10L, "200.0"), new Observation("aid", "cid", 11L, "201.0")};
         DataInquiryRequest dataInquiryRequest = new DataInquiryRequest();
-        dataInquiryRequest.setStartDate(10l);
-        dataInquiryRequest.setEndDate(12l);
-        dataInquiryRequest.setMaxPoints(1000l);
+        dataInquiryRequest.setStartDate(10L);
+        dataInquiryRequest.setEndDate(12L);
+        dataInquiryRequest.setMaxPoints(1000L);
         DataRetrieveParams params = new DataRetrieveParams(dataInquiryRequest, null);
         SampleAggregationDataRetriever instance = new SampleAggregationDataRetriever(params);
 
@@ -63,7 +63,7 @@ public class SampleAggregationDataRetrieverTest {
         List<List<String>> result = instance.get(observations, null, null);
 
         //ASSERT
-        assertThat(result, is(Arrays.asList(Arrays.asList("10", "200.0"), Arrays.asList("11", "201.0"))));
+        assertEquals(result, Arrays.asList(Arrays.asList("10", "200.0"), Arrays.asList("11", "201.0")));
     }
 
     @Test

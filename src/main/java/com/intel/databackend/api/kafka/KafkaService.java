@@ -23,5 +23,5 @@ import java.util.List;
 
 public interface KafkaService {
 
-    public void send(List<Observation> observations);
+    void send(List<Observation> observations);
 }

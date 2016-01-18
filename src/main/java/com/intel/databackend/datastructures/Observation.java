@@ -58,6 +58,7 @@ public class Observation {
     private String aid;
     private String cid;
     private Long on;
+    private Long systemOn;
     private String value;
     private List<Double> loc;
     private Map<String, String> attributes;
@@ -114,4 +115,11 @@ public class Observation {
     return JsonWriter.objectToJson(this);
     }
 
+    public Long getSystemOn() {
+        return systemOn;
+    }
+
+    public void setSystemOn(Long systemOn) {
+        this.systemOn = systemOn;
+    }
 }

@@ -18,8 +18,20 @@ package com.intel.databackend.config;
 
 import com.intel.databackend.exceptions.VcapEnvironmentException;
 
-public interface KafkaBrokerCredentialsProvider {
+public interface ServiceConfigProvider {
 
-    String getUri() throws VcapEnvironmentException;
+    String getKafkaUri() throws VcapEnvironmentException;
+
+    String getZookeeperUri() throws VcapEnvironmentException;
+
+    Boolean isKafkaEnabled() throws VcapEnvironmentException;
+
+    String getKafkaTopicName() throws VcapEnvironmentException;
+
+    Integer getKafkaPartitionsFactor() throws VcapEnvironmentException;
+
+    Integer getKafkaReplicationFactor() throws VcapEnvironmentException;
+
+    Integer getKafkaTimeoutInMs() throws VcapEnvironmentException;
 
 }

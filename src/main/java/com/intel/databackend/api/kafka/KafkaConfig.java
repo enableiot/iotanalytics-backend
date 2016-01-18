@@ -15,7 +15,7 @@
  */
 package com.intel.databackend.api.kafka;
 
-import com.intel.databackend.config.KafkaBrokerCredentialsProvider;
+import com.intel.databackend.config.ServiceConfigProvider;
 import com.intel.databackend.datastructures.Observation;
 import com.intel.databackend.exceptions.VcapEnvironmentException;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -25,7 +25,6 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -39,26 +38,26 @@ public class KafkaConfig {
     private static final Logger logger = LoggerFactory.getLogger(KafkaConfig.class);
 
     @Autowired
-    private KafkaBrokerCredentialsProvider kafkaBrokerCredentialsProvider;
+    private ServiceConfigProvider serviceConfigProvider;
 
     private final Serializer<String> keySerializer = new StringSerializer();
 
     private final Serializer<Observation> valueSerializer = new KafkaJSONSerializer();
 
-    @Value("${kafka.enabled}")
-    private Boolean isEnabled;
-
     @Bean
     public KafkaProducer<String, Observation> kafkaProducer() throws VcapEnvironmentException {
-        if (!isEnabled) {
-            logger.info("Kafka is not available. No data will be ingested into Kafka broker.");
-            return null;
+        try {
+            if (serviceConfigProvider.isKafkaEnabled()) {
+                Map<String, Object> producerConfig = new HashMap<>();
+                producerConfig.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, serviceConfigProvider.getKafkaUri());
+                return new KafkaProducer<>(producerConfig, keySerializer, valueSerializer);
+            }
+        } catch (VcapEnvironmentException e) {
+            logger.error("Kafka configuration is not available.", e);
         }
+        logger.info("Kafka is not available. No data will be ingested into Kafka broker.");
+        return null;
 
-        Map<String, Object> producerConfig = new HashMap<>();
-        producerConfig.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaBrokerCredentialsProvider.getUri());
-        return new KafkaProducer<>(producerConfig, keySerializer, valueSerializer);
+
     }
-
-
 }

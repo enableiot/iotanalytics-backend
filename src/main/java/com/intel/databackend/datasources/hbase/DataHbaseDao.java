@@ -18,8 +18,6 @@ package com.intel.databackend.datasources.hbase;
 
 import com.intel.databackend.datastructures.Observation;
 import org.apache.hadoop.hbase.Cell;
-import org.apache.hadoop.hbase.HColumnDescriptor;
-import org.apache.hadoop.hbase.HTableDescriptor;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.filter.ColumnPrefixFilter;
@@ -39,7 +37,6 @@ import java.util.*;
 public class DataHbaseDao implements DataDao {
 
     private static final Logger logger = LoggerFactory.getLogger(DataHbaseDao.class);
-    private static final int ONE_YEAR_IN_SECONDS = 60 * 60 * 24 * 365;
     private final String tableName;
     private final byte[] tableNameBytes;
     private static final String DEVICE_MEASUREMENT = "_DEVICE_MEASUREMENT";
@@ -71,25 +68,8 @@ public class DataHbaseDao implements DataDao {
         logger.info("Try to create {} in HBase.", tableName);
         try {
             admin = getHbaseConnection().getAdmin();
-
-            if (!admin.tableExists(TableName.valueOf(tableNameBytes))) {
-                HTableDescriptor table = new HTableDescriptor(TableName.valueOf(tableNameBytes));
-                HColumnDescriptor family = new HColumnDescriptor(Columns.BYTES_COLUMN_FAMILY);
-                family.setTimeToLive(ONE_YEAR_IN_SECONDS);
-                table.addFamily(family);
-                admin.createTable(table);
-                logger.info("Table {} created in HBase.", tableName);
-                return true;
-            } else {
-                HTableDescriptor table = admin.getTableDescriptor(TableName.valueOf(tableNameBytes));
-                for(HColumnDescriptor family: table.getColumnFamilies()) {
-                    family.setTimeToLive(ONE_YEAR_IN_SECONDS);
-                    admin.modifyTable(TableName.valueOf(tableNameBytes), table);
-                    logger.info("Setting TTL for column family: {}", family.getNameAsString());
-                }
-                logger.info("Table {} already exists in HBase.", tableName);
-                return false;
-            }
+            TableManager tableManager = new TableManager(admin, TableName.valueOf(tableNameBytes));
+            return tableManager.createTables();
         } catch (IOException e) {
             logger.warn("Initialization of HBase table failed.", e);
             return false;

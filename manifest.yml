@@ -12,5 +12,7 @@ applications:
     - dashboard-endpoint-ups
     - installer-backend-user-credentials-ups
     - mykafka
+    - kafka-ups
+    - myzookeeper
   env:
     VERSION: "0.15.0"

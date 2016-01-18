@@ -18,12 +18,11 @@ package com.intel.databackend.api;
 
 import com.intel.databackend.api.inquiry.advanced.AdvancedDataInquiryService;
 import com.intel.databackend.api.inquiry.basic.BasicDataInquiryService;
-import com.intel.databackend.api.kafka.KafkaSenderService;
 import com.intel.databackend.api.kafka.KafkaService;
 import com.intel.databackend.config.DashboardCredentialsProvider;
-import com.intel.databackend.config.KafkaBrokerCredentialsProvider;
+import com.intel.databackend.config.ServiceConfigProvider;
 import com.intel.databackend.config.cloudfoundry.DashboardEndpointConfig;
-import com.intel.databackend.config.cloudfoundry.KafkaBrokerConfig;
+import com.intel.databackend.config.cloudfoundry.ServiceConfig;
 import com.intel.databackend.datasources.dashboard.auth.AuthApi;
 import com.intel.databackend.datasources.dashboard.auth.AuthRestApi;
 import com.intel.databackend.datasources.dashboard.components.ComponentsDao;
@@ -32,9 +31,7 @@ import com.intel.databackend.datasources.dashboard.devices.DeviceDao;
 import com.intel.databackend.datasources.dashboard.devices.DeviceRestApi;
 import com.intel.databackend.datasources.hbase.DataDao;
 import com.intel.databackend.datasources.hbase.DataHbaseDao;
-import com.intel.databackend.datastructures.Observation;
 import com.intel.databackend.exceptions.VcapEnvironmentException;
-import org.apache.kafka.clients.producer.KafkaProducer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -52,16 +49,6 @@ public class ServiceConfiguration {
     @Bean
     public DashboardCredentialsProvider dashboardCredentialsProvider() {
         return new DashboardEndpointConfig();
-    }
-
-    @Bean
-    public KafkaBrokerCredentialsProvider KafkaConfigProvider() {
-        return new KafkaBrokerConfig();
-    }
-
-    @Bean
-    public KafkaService kafkaService(KafkaProducer<String, Observation> kafkaProducer) {
-        return new KafkaSenderService(kafkaProducer);
     }
 
     @Bean
