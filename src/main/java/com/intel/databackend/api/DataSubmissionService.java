@@ -16,6 +16,7 @@
 
 package com.intel.databackend.api;
 
+import com.intel.databackend.api.kafka.KafkaService;
 import com.intel.databackend.datasources.hbase.DataDao;
 import com.intel.databackend.datastructures.Observation;
 import com.intel.databackend.datastructures.requests.DataSubmissionRequest;
@@ -30,10 +31,12 @@ public class DataSubmissionService implements Service<DataSubmissionRequest, Dat
     private DataSubmissionRequest request;
 
     private DataDao dataDao;
+    private KafkaService kafkaService;
 
     @Autowired
-    public DataSubmissionService(DataDao dataDao) {
+    public DataSubmissionService(DataDao dataDao, KafkaService kafkaService) {
         this.dataDao = dataDao;
+        this.kafkaService = kafkaService;
     }
 
     @Override
@@ -53,6 +56,9 @@ public class DataSubmissionService implements Service<DataSubmissionRequest, Dat
         }
 
         dataDao.put(request.getData().toArray(new Observation[request.getData().size()]));
+
+        kafkaService.send(request.getData());
+
         return new DataSubmissionResponse();
     }
 }

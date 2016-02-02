@@ -113,7 +113,7 @@ public class DataHbaseDao implements DataDao {
             table.put(puts);
         } catch (IOException ex) {
             return false;
-        } 
+        }
         return true;
     }
 

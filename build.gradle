@@ -39,6 +39,10 @@ apply plugin: 'project-report'
 
 mainClassName = "com.intel.databackend.Application"
 sourceCompatibility = 1.8
+ext.cdhVersion = "cdh5.5.1"
+ext.hbaseVersion = "1.0.0-$cdhVersion"
+ext.hadoopVersion = "2.6.0-$cdhVersion"
+
 
 jar {
     baseName 'databackend'
@@ -73,6 +77,7 @@ configurations {
     compile.exclude group: "javax.servlet", module: "servlet-api"
 }
 
+
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-web:1.2.5.RELEASE")
 
@@ -81,13 +86,13 @@ dependencies {
 
     compile("org.springframework.data:spring-data-hadoop:2.2.0.RELEASE")
 
-    compile("org.apache.hbase:hbase:0.98.6-cdh5.3.3")
-    compile("org.apache.hbase:hbase-client:0.98.6-cdh5.3.3")
-    compile("org.apache.hbase:hbase-common:0.98.6-cdh5.3.3")
+    compile("org.apache.hbase:hbase:$hbaseVersion")
+    compile("org.apache.hbase:hbase-client:$hbaseVersion")
+    compile("org.apache.hbase:hbase-common:$hbaseVersion")
     
-    compile("org.apache.hadoop:hadoop-core:2.5.0-cdh5.3.3")
-    compile("org.apache.hadoop:hadoop-common:2.5.0-cdh5.3.3")
-    compile("org.apache.hadoop:hadoop-client:2.5.0-cdh5.3.3")
+    compile("org.apache.hadoop:hadoop-core:$hadoopVersion")
+    compile("org.apache.hadoop:hadoop-common:$hadoopVersion")
+    compile("org.apache.hadoop:hadoop-client:$hadoopVersion")
     
     compile("com.cedarsoftware:json-io:3.1.2")
     compile("org.springframework:spring-test:4.1.6.RELEASE")
@@ -95,6 +100,9 @@ dependencies {
     compile "com.btmatthews.hamcrest:hamcrest-matchers:1.0.1"
 
     compile("org.trustedanalytics:hadoop-utils:0.5.0")
+
+    compile("org.apache.kafka:kafka_2.11:0.8.2.2")
+    compile("org.apache.kafka:kafka-clients:0.8.2.2")
 
     testCompile group: 'junit', name: 'junit', version: '4.+'
     testCompile 'org.testng:testng:6.8.21'

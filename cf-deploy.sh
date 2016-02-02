@@ -31,5 +31,5 @@ function ask {
 ask demo
 ask prod
 
+gradle build
 cf push ${SPACE}-backend
-

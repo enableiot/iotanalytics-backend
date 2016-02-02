@@ -16,6 +16,7 @@
 
 package com.intel.databackend.api;
 
+import com.intel.databackend.api.kafka.KafkaService;
 import com.intel.databackend.datasources.hbase.DataDao;
 import com.intel.databackend.datastructures.Observation;
 import com.intel.databackend.datastructures.requests.DataSubmissionRequest;
@@ -31,11 +32,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyListOf;
 import static org.testng.Assert.assertEquals;
 
 
 public class DataSubmissionServiceTest {
     private DataDao dataDaoMock;
+    private KafkaService kafkaServiceMock;
     private Service<DataSubmissionRequest, DataSubmissionResponse> dataSubmissionService;
     private String accountId;
     private DataSubmissionRequest request;
@@ -44,9 +47,10 @@ public class DataSubmissionServiceTest {
     @Before
     public void SetUp(){
         dataDaoMock = Mockito.mock(DataDao.class);
+        kafkaServiceMock = Mockito.spy(KafkaService.class);
         accountId = "acc1";
         request = new DataSubmissionRequest();
-        dataSubmissionService =  new DataSubmissionService(dataDaoMock);
+        dataSubmissionService =  new DataSubmissionService(dataDaoMock, kafkaServiceMock);
     }
 
     @Test(expected=MissingDataSubmissionArgumentException.class)
@@ -66,6 +70,7 @@ public class DataSubmissionServiceTest {
         List<Observation> data = new ArrayList<>();
         data.add(observation);
         request.setData(data);
+        Mockito.doNothing().when(kafkaServiceMock).send(anyListOf(Observation.class));
         Mockito.when(dataDaoMock.put(any(Observation[].class))).thenReturn(true);
 
         dataSubmissionService.withParams(accountId, request);
