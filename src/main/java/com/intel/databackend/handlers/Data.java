@@ -39,7 +39,17 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
 
 @RestController
 @ControllerAdvice
@@ -63,16 +73,21 @@ public class Data {
     private RequestValidator requestValidator;
 
     @RequestMapping(value="/v1/accounts/{accountId}/dataSubmission", method=RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody ResponseEntity dataSubmission(@PathVariable String accountId, @RequestBody DataSubmissionRequest request) throws ServiceException{
+    public @ResponseBody ResponseEntity dataSubmission(@PathVariable String accountId, @Valid @RequestBody DataSubmissionRequest request,
+                                                       BindingResult result) throws ServiceException, BindException {
         logger.info("REQUEST: aid: {}", accountId);
         logger.debug("{}", request);
 
-        dataSubmissionService.withParams(accountId, request);
+        if (result.hasErrors()) {
+            throw new BindException(result);
+        } else {
+            dataSubmissionService.withParams(accountId, request);
 
-        dataSubmissionService.invoke();
-        ResponseEntity res = new ResponseEntity<>(HttpStatus.CREATED);
-        logger.info("RESPONSE: {}", res.getStatusCode());
-        return res;
+            dataSubmissionService.invoke();
+            ResponseEntity res = new ResponseEntity<>(HttpStatus.CREATED);
+            logger.info("RESPONSE: {}", res.getStatusCode());
+            return res;
+        }
     }
 
     @RequestMapping(value="/v1/accounts/{accountId}/dataInquiry", method=RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -110,17 +125,22 @@ public class Data {
     }
 
     @RequestMapping(value="/v1/accounts/{accountId}/inquiryComponentFirstAndLast")
-    public @ResponseBody ResponseEntity firstLastMeasurementTimestamp(@PathVariable String accountId, @RequestBody final FirstLastTimestampRequest request) throws VcapEnvironmentException, ServiceException {
+    public @ResponseBody ResponseEntity firstLastMeasurementTimestamp(@PathVariable String accountId,
+                                                                      @Valid @RequestBody final FirstLastTimestampRequest request,
+                                                                      BindingResult result) throws VcapEnvironmentException, ServiceException, BindException {
         logger.info("REQUEST: aid: {}", accountId);
         logger.debug(request.toString());
 
-        firstLastTimestampService.withParams(accountId, request);
-
-        FirstLastTimestampResponse firstLastTimestampResponse = firstLastTimestampService.invoke();
-        ResponseEntity res = new ResponseEntity<>(firstLastTimestampResponse, HttpStatus.OK);
-        logger.info("RESPONSE: {}", res.getStatusCode());
-        logger.debug("{}", firstLastTimestampResponse);
-        return res;
+        if (result.hasErrors()) {
+            throw new BindException(result);
+        } else {
+            firstLastTimestampService.withParams(accountId, request);
+            FirstLastTimestampResponse firstLastTimestampResponse = firstLastTimestampService.invoke();
+            ResponseEntity res = new ResponseEntity<>(firstLastTimestampResponse, HttpStatus.OK);
+            logger.info("RESPONSE: {}", res.getStatusCode());
+            logger.debug("{}", firstLastTimestampResponse);
+            return res;
+        }
     }
 
     @RequestMapping("/")

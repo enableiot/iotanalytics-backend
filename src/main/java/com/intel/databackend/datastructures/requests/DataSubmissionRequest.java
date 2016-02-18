@@ -19,6 +19,7 @@ package com.intel.databackend.datastructures.requests;
 import com.cedarsoftware.util.io.*;
 import com.intel.databackend.datastructures.Observation;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 
@@ -30,6 +31,8 @@ public class DataSubmissionRequest {
     private Long on;
     private Long count;
     private Long systemOn;
+
+    @NotNull
     private List<Observation> data =  null;
 
     public String getAccountId() {

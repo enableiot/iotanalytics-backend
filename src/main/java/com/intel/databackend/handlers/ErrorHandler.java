@@ -11,8 +11,13 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Copyright (c) 2015 Intel Corporation
@@ -58,4 +63,15 @@ public class ErrorHandler {
         logger.error("Bad request: ", ex);
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(BindException.class)
+    public ResponseEntity handleError(BindException ex) {
+        Map<String, String> errors = new HashMap<>();
+        for (FieldError error : ex.getFieldErrors()) {
+            errors.put(error.getField(), error.getDefaultMessage());
+        }
+        logger.error("Validation error: ", errors);
+        return new ResponseEntity<Map<String, String>>(errors, HttpStatus.BAD_REQUEST);
+    }
 }
+

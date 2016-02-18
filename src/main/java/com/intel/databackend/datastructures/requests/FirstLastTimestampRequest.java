@@ -17,15 +17,16 @@
 package com.intel.databackend.datastructures.requests;
 
 import com.cedarsoftware.util.io.JsonWriter;
-import com.fasterxml.jackson.annotation.JsonInclude;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
-
 
 
 public class FirstLastTimestampRequest {
 
     private String msgType;
+
+    @NotNull
     private List<String> components;
 
     public String getMsgType() {
@@ -45,7 +46,7 @@ public class FirstLastTimestampRequest {
     }
 
     public String toString() {
-            return JsonWriter.objectToJson(this);
-        }
+        return JsonWriter.objectToJson(this);
+    }
 
 }
