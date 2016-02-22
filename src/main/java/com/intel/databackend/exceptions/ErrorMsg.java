@@ -29,6 +29,8 @@ public class ErrorMsg {
 
     public static final String NO_COMPONENTS_PROVIDED = "No components provided";
 
+    public static final String NO_DEVICE_DATA = "No deviceData provided";
+
     public static final String NO_START_OR_END_DATE = "startDate and endDate numeric fields are required";
 
     public static final String NO_START_OR_END_TIMESTAMP = "startTimestamp and endTimestamp numeric fields are required";

@@ -29,6 +29,7 @@ public class DeviceData {
 
     private String deviceId;
     private String deviceName;
+    private List<String> tags;
     private List<AdvancedComponent> components;
 
     private String accountId;
@@ -70,5 +71,13 @@ public class DeviceData {
 
     public void setComponents(List<AdvancedComponent> components) {
         this.components = components;
+    }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
     }
 }

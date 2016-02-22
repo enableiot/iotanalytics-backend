@@ -16,26 +16,22 @@
 
 package com.intel.databackend.datastructures.requests;
 
-import com.cedarsoftware.util.io.*;
+import com.cedarsoftware.util.io.JsonWriter;
+import com.intel.databackend.datastructures.DeviceData;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
-
-
 public class AdvDataInquiryRequest {
-
     private String msgType;
     private Boolean countOnly;
 
     private Long startTimestamp;
     private Long endTimestamp;
 
-    private List<String> gatewayIds;
-    private List<String> deviceIds;
-    private List<String> componentIds;
+    List<DeviceData> deviceDataList;
 
     private List<String> returnedMeasureAttributes;
     private Boolean showMeasureLocation;
@@ -62,30 +58,6 @@ public class AdvDataInquiryRequest {
 
     public void setEndTimestamp(Long endTimestamp) {
         this.endTimestamp = endTimestamp;
-    }
-
-    public List<String> getGatewayIds() {
-        return gatewayIds;
-    }
-
-    public void setGatewayIds(List<String> gatewayIds) {
-        this.gatewayIds = gatewayIds;
-    }
-
-    public List<String> getDeviceIds() {
-        return deviceIds;
-    }
-
-    public void setDeviceIds(List<String> deviceIds) {
-        this.deviceIds = deviceIds;
-    }
-
-    public List<String> getComponentIds() {
-        return componentIds;
-    }
-
-    public void setComponentIds(List<String> componentIds) {
-        this.componentIds = componentIds;
     }
 
     public List<String> getReturnedMeasureAttributes() {
@@ -183,10 +155,6 @@ public class AdvDataInquiryRequest {
         return getReturnedMeasureAttributes() != null && getReturnedMeasureAttributes().size() > 0;
     }
 
-    public boolean hasEmptyComponentsIds() {
-        return getComponentIds() == null || getComponentIds().size() <= 0;
-    }
-
     public String getMsgType() {
         return msgType;
     }
@@ -197,5 +165,13 @@ public class AdvDataInquiryRequest {
 
     public void setCountOnly(Boolean countOnly) {
         this.countOnly = countOnly;
+    }
+
+    public List<DeviceData> getDeviceDataList() {
+        return deviceDataList;
+    }
+
+    public void setDeviceDataList(List<DeviceData> deviceDataList) {
+        this.deviceDataList = deviceDataList;
     }
 }

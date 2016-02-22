@@ -27,7 +27,6 @@ import com.intel.databackend.api.inquiry.basic.validators.PlainDataTypeValidator
 import com.intel.databackend.api.inquiry.samples.SampleAggregationDataRetriever;
 import com.intel.databackend.api.inquiry.samples.SampleDataRetriever;
 import com.intel.databackend.api.inquiry.samples.SamplePlainDataRetriever;
-import com.intel.databackend.datasources.dashboard.components.ComponentsDao;
 import com.intel.databackend.datasources.hbase.DataDao;
 import com.intel.databackend.datastructures.Component;
 import com.intel.databackend.datastructures.ComponentDataType;
@@ -37,11 +36,17 @@ import com.intel.databackend.exceptions.DataInquiryException;
 import com.intel.databackend.exceptions.IllegalDataInquiryArgumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 
 import java.util.List;
 import java.util.Map;
 
+import static org.springframework.context.annotation.ScopedProxyMode.TARGET_CLASS;
+import static org.springframework.web.context.WebApplicationContext.SCOPE_REQUEST;
 
+@org.springframework.stereotype.Service
+@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
 public class BasicDataInquiryService implements Service<DataInquiryRequest, DataInquiryResponse> {
 
     private static final Logger logger = LoggerFactory.getLogger(BasicDataInquiryService.class);
@@ -50,7 +55,6 @@ public class BasicDataInquiryService implements Service<DataInquiryRequest, Data
     private DataInquiryRequest dataInquiryRequest;
     private DataInquiryResponse dataInquiryResponse;
     
-    private ComponentsDao componentsDao;
     private DataDao hbase;
 
     private ResponseBuilder responseBuilder;
@@ -65,9 +69,9 @@ public class BasicDataInquiryService implements Service<DataInquiryRequest, Data
 
     private ObservationFilterSelector observationFilterSelector;
 
-    public BasicDataInquiryService(DataDao hbase, ComponentsDao componentsDao) {
+    @Autowired
+    public BasicDataInquiryService(DataDao hbase) {
         this.hbase = hbase;
-        this.componentsDao = componentsDao;
     }
 
     @Override
@@ -75,8 +79,9 @@ public class BasicDataInquiryService implements Service<DataInquiryRequest, Data
         this.accountId = accountId;
         this.dataInquiryRequest = request;
         this.dataRetrieveParams = new DataRetrieveParams(this.dataInquiryRequest, this.accountId);
-        dataRetriever = new DataRetriever(hbase, dataRetrieveParams);
-        observationFilterSelector = new BaseObservationFilterSelector();
+        this.componentsMetadata = request.getComponentsWithDataType();
+        this.dataRetriever = new DataRetriever(hbase, dataRetrieveParams);
+        this.observationFilterSelector = new BaseObservationFilterSelector();
         return this;
     }
 
@@ -106,7 +111,6 @@ public class BasicDataInquiryService implements Service<DataInquiryRequest, Data
             sampleDataRetriever = new SamplePlainDataRetriever(null);
             componentsDataTypeValidator = new PlainDataTypeValidator();
         } else {
-            getComponentsMetadata();
             sampleDataRetriever = new SampleAggregationDataRetriever(dataRetrieveParams);
             componentsDataTypeValidator = new BucketDataTypeValidator(componentsMetadata);
         }
@@ -116,18 +120,12 @@ public class BasicDataInquiryService implements Service<DataInquiryRequest, Data
     }
 
     private DataInquiryResponse buildOutputMessage() {
-
         responseBuilder = new ResponseBuilder(accountId, dataRetriever.getRowCount(), outputComponents);
-
         return responseBuilder.getDataInquiryResponse();
     }
 
     private boolean isCountOnly() {
         return dataInquiryRequest.getCountOnly() != null && dataInquiryRequest.getCountOnly();
-    }
-
-    private void getComponentsMetadata () {
-        componentsMetadata = componentsDao.getAdvComponentsMetadata(accountId, dataInquiryRequest.getComponents());
     }
 
     private boolean shouldGenerateAggregations() {

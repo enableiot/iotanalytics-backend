@@ -25,11 +25,11 @@ import org.codehaus.jettison.json.JSONObject;
 
 public class DashboardEndpointConfig implements DashboardCredentialsProvider {
 
-    private static final String ENDPOINT_SERVICE_NAME = "dashboard-endpoint-ups";
-    private static final String USER_SERVICE_NAME = "installer-backend-user-credentials-ups";
-    private static final String HOST = "host";
-    private static final String USERNAME = "username";
-    private static final String PASSWORD = "password";
+    public static final String ENDPOINT_SERVICE_NAME = "dashboard-endpoint-ups";
+    public static final String USER_SERVICE_NAME = "aa-backend-user-credentials-ups";
+    public static final String HOST = "host";
+    public static final String USERNAME = "username";
+    public static final String PASSWORD = "password";
 
     private VcapReader vcapReaderServices = null;
     private String endpoint;

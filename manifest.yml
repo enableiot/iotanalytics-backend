@@ -9,7 +9,6 @@ applications:
     - kerberos-service
     - myhdfs
     - myhbase
-    - dashboard-endpoint-ups
     - installer-backend-user-credentials-ups
     - mykafka
     - kafka-ups

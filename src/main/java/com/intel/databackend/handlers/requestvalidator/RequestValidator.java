@@ -21,5 +21,5 @@ import com.intel.databackend.exceptions.*;
 
 public interface RequestValidator {
 
-    public void validate() throws IllegalDataInquiryArgumentException;
+    void validate() throws IllegalDataInquiryArgumentException;
 }

@@ -29,10 +29,7 @@ public class DataRetrieveParams {
     private final Long endDate;
     private final Long maxPoints;
     private final String accountId;
-    private  List<String> componentsAttributes;
-
-    private List<String> components;
-
+    private List<String> componentsAttributes;
     private final Boolean queryMeasureLocation;
 
     private Map<String, ComponentDataType> componentsMetadata;
@@ -43,8 +40,8 @@ public class DataRetrieveParams {
         this.accountId = accountId;
         this.queryMeasureLocation = dataInquiryRequest.getQueryMeasureLocation();
         this.componentsAttributes = dataInquiryRequest.getComponentAttributes();
-        this.components = dataInquiryRequest.getComponents();
         this.maxPoints = dataInquiryRequest.getMaxPoints();
+        this.componentsMetadata = dataInquiryRequest.getComponentsWithDataType();
     }
 
     public DataRetrieveParams (AdvDataInquiryRequest dataInquiryRequest, String accountId) {
@@ -75,10 +72,6 @@ public class DataRetrieveParams {
         return attributes;
     }
 
-    public List<String> getComponents() {
-        return components;
-    }
-
     public boolean isQueryMeasureLocation() {
         if (queryMeasureLocation == null) {
             return false;
@@ -88,10 +81,6 @@ public class DataRetrieveParams {
 
     public Long getMaxPoints() {
         return maxPoints;
-    }
-
-    public void setComponents(List<String> components) {
-        this.components = components;
     }
 
     public void setComponentsAttributes(List<String> componentsAttributes) {

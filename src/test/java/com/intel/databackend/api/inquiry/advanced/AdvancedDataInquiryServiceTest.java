@@ -16,9 +16,6 @@
 
 package com.intel.databackend.api.inquiry.advanced;
 
-import com.intel.databackend.datasources.dashboard.components.ComponentsDao;
-import com.intel.databackend.datasources.dashboard.devices.DeviceDao;
-import com.intel.databackend.datasources.dashboard.utils.QueryParam;
 import com.intel.databackend.datasources.hbase.DataDao;
 import com.intel.databackend.datastructures.AdvancedComponent;
 import com.intel.databackend.datastructures.DeviceData;
@@ -27,44 +24,39 @@ import com.intel.databackend.datastructures.requests.AdvDataInquiryRequest;
 import com.intel.databackend.datastructures.responses.AdvDataInquiryResponse;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyListOf;
 import static org.testng.Assert.assertEquals;
 
 
 public class AdvancedDataInquiryServiceTest {
     private DataDao dataDaoMock;
-    private ComponentsDao componentsDaoMock;
-    private DeviceDao deviceDaoMock;
-
     private AdvancedDataInquiryService advancedDataInquiryService;
     private String accountId;
     private AdvDataInquiryRequest request;
 
-
-
-
     @Before
     public void SetUp(){
         dataDaoMock = Mockito.mock(DataDao.class);
-        componentsDaoMock = Mockito.mock(ComponentsDao.class);
-        deviceDaoMock = Mockito.mock(DeviceDao.class);
 
         accountId = java.util.UUID.randomUUID().toString();
         request = new AdvDataInquiryRequest();
         request.setStartTimestamp(1L);
         request.setEndTimestamp(1L);
-        advancedDataInquiryService =  new AdvancedDataInquiryService(dataDaoMock, componentsDaoMock, deviceDaoMock);
+        advancedDataInquiryService =  new AdvancedDataInquiryService(dataDaoMock);
     }
 
     @Test
     public void Invoke_ComponentIdsNull_ReturnsEmptyAdvInquiryResponse() throws Exception{
+        DeviceData deviceData = new DeviceData();
+        deviceData.setComponents(Arrays.asList(new AdvancedComponent()));
+        request.setDeviceDataList(Arrays.asList(deviceData));
+
         //ARRANGE
         advancedDataInquiryService = advancedDataInquiryService.withParams(accountId, request);
 
@@ -76,8 +68,6 @@ public class AdvancedDataInquiryServiceTest {
         assertEquals(0, response.getData().size());
         assertEquals(null, response.getRowCount());
         Mockito.verify(dataDaoMock, Mockito.times(0)).scan(any(String.class), any(String.class), any(Long.class), any(Long.class), any(Boolean.class), any(String[].class));
-        Mockito.verify(deviceDaoMock, Mockito.times(0)).getDevicesFromAccount(any(String.class), Matchers.<List<String>>any());
-        Mockito.verify(componentsDaoMock, Mockito.times(1)).getComponentsByCustomParams(any(String.class), Matchers.<List<QueryParam>>any());
     }
 
     @Test
@@ -87,12 +77,13 @@ public class AdvancedDataInquiryServiceTest {
         Observation[] observations = new Observation[1];
         observations[0] = observation;
         String[] stringAttributes = new String[0];
-        List<String> data = new ArrayList<>();
-        data.add(observation.getCid());
-        request.setComponentIds(data);
 
+        DeviceData deviceData = new DeviceData();
+        AdvancedComponent advancedComponent = new AdvancedComponent();
+        advancedComponent.setComponentId(observation.getCid());
+        deviceData.setComponents(Arrays.asList(advancedComponent));
+        request.setDeviceDataList(Arrays.asList(deviceData));
 
-        Mockito.when(componentsDaoMock.getComponentsByCustomParams(any(String.class), anyListOf(QueryParam.class))).thenReturn(data);
         Mockito.when(dataDaoMock.put(any(Observation[].class))).thenReturn(true);
         Mockito.when(dataDaoMock.scan(any(String.class),
                 any(String.class),
@@ -115,7 +106,6 @@ public class AdvancedDataInquiryServiceTest {
         components.add(advComponent);
         devData.setComponents(components);
         devices.add(devData);
-        Mockito.when(deviceDaoMock.getDevicesFromAccount(accountId, data)).thenReturn(devices);
 
         advancedDataInquiryService = advancedDataInquiryService.withParams(accountId, request);
 
@@ -137,12 +127,14 @@ public class AdvancedDataInquiryServiceTest {
         Observation[] observations = new Observation[1];
         observations[0] = observation;
         String[] stringAttributes = new String[0];
-        List<String> data = new ArrayList<>();
-        data.add(observation.getCid());
-        request.setComponentIds(data);
+
+        DeviceData deviceData = new DeviceData();
+        AdvancedComponent advancedComponent = new AdvancedComponent();
+        advancedComponent.setComponentId(observation.getCid());
+        deviceData.setComponents(Arrays.asList(advancedComponent));
+        request.setDeviceDataList(Arrays.asList(deviceData));
         request.setCountOnly(true);
 
-        Mockito.when(componentsDaoMock.getComponentsByCustomParams(any(String.class), Matchers.<List<QueryParam>>any())).thenReturn(data);
         Mockito.when(dataDaoMock.put(any(Observation[].class))).thenReturn(true);
         Mockito.when(dataDaoMock.scan(any(String.class),
                 any(String.class),

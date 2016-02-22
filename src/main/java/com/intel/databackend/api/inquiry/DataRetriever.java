@@ -23,6 +23,7 @@ import com.intel.databackend.datastructures.Observation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,8 +47,9 @@ public class DataRetriever {
 
     public void retrieveAndCount(ObservationFilterSelector filter) {
         Map<String, Observation[]> componentObservations = new HashMap<>();
+        Collection<String> components = dataRetrieveParams.getComponentsMetadata().keySet();
         rowCount = 0L;
-        for (String component : dataRetrieveParams.getComponents()) {
+        for (String component : components) {
             Observation[] observations = hbase.scan(dataRetrieveParams.getAccountId(),
                     component,
                     dataRetrieveParams.getStartDate(),

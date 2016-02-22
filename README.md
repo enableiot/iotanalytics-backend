@@ -29,10 +29,6 @@ To install AA backend in your Trusted Analytics Platform space, login into TAP a
     * Zookeeper broker with name myzookeeper
     
 1. Create following user-provided services with properties filled with real values:
-
-   Provide ${ADDRESS} with url to your dashboard instance
-   
-        cf cups dashboard-endpoint-ups -p "{\"host\":\"${ADDRESS}\"}"
    
    If you have deployed dashboard already then you should have user and password set previously. This is only reminder
    that same service need to be attached to backend

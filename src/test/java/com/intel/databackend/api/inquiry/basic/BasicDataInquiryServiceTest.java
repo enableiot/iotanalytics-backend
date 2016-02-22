@@ -16,7 +16,6 @@
 
 package com.intel.databackend.api.inquiry.basic;
 
-import com.intel.databackend.datasources.dashboard.components.ComponentsDao;
 import com.intel.databackend.datasources.hbase.DataDao;
 import com.intel.databackend.datastructures.ComponentDataType;
 import com.intel.databackend.datastructures.Observation;
@@ -27,7 +26,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,7 +34,6 @@ import static org.testng.Assert.assertEquals;
 
 public class BasicDataInquiryServiceTest {
     private DataDao dataDaoMock;
-    private ComponentsDao componentsDaoMock;
     private BasicDataInquiryService basicDataInquiryService;
     private String accountId;
     private String componentId;
@@ -46,8 +43,7 @@ public class BasicDataInquiryServiceTest {
     @Before
     public void SetUp(){
         dataDaoMock = Mockito.mock(DataDao.class);
-        componentsDaoMock = Mockito.mock(ComponentsDao.class);
-        basicDataInquiryService =  new BasicDataInquiryService(dataDaoMock, componentsDaoMock);
+        basicDataInquiryService =  new BasicDataInquiryService(dataDaoMock);
         accountId = "acc1";
         componentId = "comp1";
         request = new DataInquiryRequest();
@@ -74,8 +70,8 @@ public class BasicDataInquiryServiceTest {
         //ARRANGE
         request.setStartDate(1L);
         request.setEndDate(1L);
-        request.setComponents(new ArrayList<String>());
         request.setCountOnly(true);
+        request.setComponentsWithDataType(new HashMap<>());
 
         basicDataInquiryService = basicDataInquiryService.withParams(accountId, request);
 
@@ -92,9 +88,10 @@ public class BasicDataInquiryServiceTest {
         //ARRANGE
         request.setStartDate(1L);
         request.setEndDate(1L);
-        request.setComponents(new ArrayList<String>());
-        request.getComponents().add(componentId);
         request.setCountOnly(true);
+        Map<String, ComponentDataType> components = new HashMap<>();
+        components.put(componentId, new ComponentDataType());
+        request.setComponentsWithDataType(components);
 
         Observation[] observations = new Observation[2];
         Mockito.when(dataDaoMock.scan(accountId, componentId, request.getStartDate(), request.getEndDate(), false, null)).thenReturn(observations);
@@ -112,9 +109,10 @@ public class BasicDataInquiryServiceTest {
         //ARRANGE
         request.setStartDate(1L);
         request.setEndDate(1L);
-        request.setComponents(new ArrayList<String>());
-        request.getComponents().add(componentId);
         request.setCountOnly(false);
+        Map<String, ComponentDataType> components = new HashMap<>();
+        components.put(componentId, new ComponentDataType());
+        request.setComponentsWithDataType(components);
         basicDataInquiryService = basicDataInquiryService.withParams(accountId, request);
 
         MockTwoObservations();
@@ -135,16 +133,14 @@ public class BasicDataInquiryServiceTest {
         //ARRANGE
         request.setStartDate(1L);
         request.setEndDate(1L);
-        request.setComponents(new ArrayList<String>());
-        request.getComponents().add(componentId);
         request.setMaxPoints(1L);
-        basicDataInquiryService = basicDataInquiryService.withParams(accountId, request);
 
         MockTwoObservations();
 
         Map<String, ComponentDataType> componentData = new HashMap<String, ComponentDataType>();
         componentData.put(componentId, null);
-        Mockito.when(componentsDaoMock.getAdvComponentsMetadata(accountId, request.getComponents())).thenReturn(componentData);
+        request.setComponentsWithDataType(componentData);
+        basicDataInquiryService = basicDataInquiryService.withParams(accountId, request);
 
         //ACT
         basicDataInquiryService.invoke();
@@ -156,10 +152,7 @@ public class BasicDataInquiryServiceTest {
         //ARRANGE
         request.setStartDate(1L);
         request.setEndDate(1L);
-        request.setComponents(new ArrayList<String>());
-        request.getComponents().add(componentId);
         request.setMaxPoints(1L);
-        basicDataInquiryService = basicDataInquiryService.withParams(accountId, request);
 
         MockTwoObservations();
 
@@ -167,7 +160,8 @@ public class BasicDataInquiryServiceTest {
         ComponentDataType type = new ComponentDataType();
         type.setDataType("Not Number");
         componentData.put(componentId, type);
-        Mockito.when(componentsDaoMock.getAdvComponentsMetadata(accountId, request.getComponents())).thenReturn(componentData);
+        request.setComponentsWithDataType(componentData);
+        basicDataInquiryService = basicDataInquiryService.withParams(accountId, request);
 
         //ACT
         basicDataInquiryService.invoke();
@@ -179,8 +173,6 @@ public class BasicDataInquiryServiceTest {
         //ARRANGE
         request.setStartDate(1L);
         request.setEndDate(5L);
-        request.setComponents(new ArrayList<String>());
-        request.getComponents().add("comp1");
         request.setMaxPoints(1L);
 
         MockTwoObservations();
@@ -189,7 +181,7 @@ public class BasicDataInquiryServiceTest {
         ComponentDataType type = new ComponentDataType();
         type.setDataType(ComponentDataType.NUMBER);
         componentData.put(componentId, type);
-        Mockito.when(componentsDaoMock.getAdvComponentsMetadata(accountId, request.getComponents())).thenReturn(componentData);
+        request.setComponentsWithDataType(componentData);
 
         basicDataInquiryService = basicDataInquiryService.withParams(accountId, request);
         //ACT

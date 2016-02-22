@@ -16,7 +16,6 @@
 
 package com.intel.databackend.api;
 
-import com.intel.databackend.datasources.dashboard.components.ComponentsDao;
 import com.intel.databackend.datasources.hbase.DataDao;
 import com.intel.databackend.datastructures.ComponentMeasurementTimestamps;
 import com.intel.databackend.datastructures.Observation;
@@ -25,8 +24,6 @@ import com.intel.databackend.datastructures.responses.FirstLastTimestampResponse
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,15 +34,13 @@ import static org.testng.Assert.assertEquals;
 public class FirstLastTimestampTest {
 
     private DataDao dataDaoMock;
-    private ComponentsDao componentsDaoMock;
     private Service<FirstLastTimestampRequest, FirstLastTimestampResponse> firstLastTimestamp;
     private String accountId;
 
     @Before
     public void SetUp(){
         dataDaoMock = Mockito.mock(DataDao.class);
-        componentsDaoMock = Mockito.mock(ComponentsDao.class);
-        firstLastTimestamp =  new FirstLastTimestampService(dataDaoMock, componentsDaoMock);
+        firstLastTimestamp =  new FirstLastTimestampService(dataDaoMock);
         accountId = "acc1";
     }
 
@@ -53,8 +48,6 @@ public class FirstLastTimestampTest {
     public void Invoke_EmptyComponentsListInDb_ReturnsOkResponseWithEmptyList() throws Exception{
         //ARRANGE
         List<String> emptyList = new ArrayList<>();
-        Mockito.when(componentsDaoMock.getComponentsFromAccount(accountId))
-                .thenReturn(emptyList);
 
         FirstLastTimestampRequest request = new FirstLastTimestampRequest();
         request.setComponents(new ArrayList<String>());
@@ -76,8 +69,6 @@ public class FirstLastTimestampTest {
         //ARRANGE
         List<String> componentsList = new ArrayList<>();
         componentsList.add("test");
-        Mockito.when(componentsDaoMock.getComponentsFromAccount(accountId))
-                .thenReturn(componentsList);
 
         FirstLastTimestampRequest request = new FirstLastTimestampRequest();
         request.setComponents(new ArrayList<String>());
@@ -98,8 +89,6 @@ public class FirstLastTimestampTest {
         //ARRANGE
         List<String> componentsList = new ArrayList<>();
         componentsList.add("test");
-        Mockito.when(componentsDaoMock.getComponentsFromAccount(accountId))
-                .thenReturn(componentsList);
 
         Mockito.when(dataDaoMock.scan(accountId, "test", 0L, Long.MAX_VALUE, false, null, true, 1)).thenReturn(new Observation[0]);
 
@@ -122,8 +111,6 @@ public class FirstLastTimestampTest {
         //ARRANGE
         List<String> componentsList = new ArrayList<>();
         componentsList.add("test");
-        Mockito.when(componentsDaoMock.getComponentsFromAccount(accountId))
-                .thenReturn(componentsList);
 
         Observation[] observations = new Observation[]{new Observation("aid","cid",1,"val")};
 

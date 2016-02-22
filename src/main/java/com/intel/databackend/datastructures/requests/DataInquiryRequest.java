@@ -16,9 +16,11 @@
 
 package com.intel.databackend.datastructures.requests;
 
-import com.cedarsoftware.util.io.*;
-import java.util.List;
+import com.cedarsoftware.util.io.JsonWriter;
+import com.intel.databackend.datastructures.ComponentDataType;
 
+import java.util.List;
+import java.util.Map;
 
 
 public class DataInquiryRequest {
@@ -31,8 +33,9 @@ public class DataInquiryRequest {
 
     private Long maxPoints;
 
+    private Map<String, ComponentDataType> componentsWithDataType;
     private List<String> componentAttributes;
-    private List<String> components;
+
     private Boolean queryMeasureLocation;
     
     public String toString() {
@@ -71,14 +74,6 @@ public class DataInquiryRequest {
         this.componentAttributes = componentAttributes;
     }
 
-    public List<String> getComponents() {
-        return components;
-    }
-
-    public void setComponents(List<String> components) {
-        this.components = components;
-    }
-
     public Boolean getQueryMeasureLocation() {
         return queryMeasureLocation;
     }
@@ -101,5 +96,13 @@ public class DataInquiryRequest {
 
     public void setCountOnly(Boolean countOnly) {
         this.countOnly = countOnly;
+    }
+
+    public Map<String, ComponentDataType> getComponentsWithDataType() {
+        return componentsWithDataType;
+    }
+
+    public void setComponentsWithDataType(Map<String, ComponentDataType> componentsWithDataType) {
+        this.componentsWithDataType = componentsWithDataType;
     }
 }

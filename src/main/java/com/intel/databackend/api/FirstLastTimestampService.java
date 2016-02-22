@@ -16,7 +16,6 @@
 
 package com.intel.databackend.api;
 
-import com.intel.databackend.datasources.dashboard.components.ComponentsDao;
 import com.intel.databackend.datasources.hbase.DataDao;
 import com.intel.databackend.datastructures.ComponentMeasurementTimestamps;
 import com.intel.databackend.datastructures.Observation;
@@ -25,10 +24,15 @@ import com.intel.databackend.datastructures.responses.FirstLastTimestampResponse
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 
 import java.util.ArrayList;
-import java.util.List;
 
+import static org.springframework.context.annotation.ScopedProxyMode.TARGET_CLASS;
+import static org.springframework.web.context.WebApplicationContext.SCOPE_REQUEST;
+
+@org.springframework.stereotype.Service
+@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
 public class FirstLastTimestampService implements Service<FirstLastTimestampRequest, FirstLastTimestampResponse> {
 
     private static final Logger logger = LoggerFactory.getLogger(FirstLastTimestampService.class);
@@ -38,14 +42,11 @@ public class FirstLastTimestampService implements Service<FirstLastTimestampRequ
 
     private DataDao hbase;
 
-    private final ComponentsDao componentsDao;
-
     private FirstLastTimestampResponse response;
 
     @Autowired
-    public FirstLastTimestampService(DataDao hBase, ComponentsDao componentsDao) {
+    public FirstLastTimestampService(DataDao hBase) {
         this.hbase = hBase;
-        this.componentsDao = componentsDao;
         this.response = new FirstLastTimestampResponse();
     }
 
@@ -58,11 +59,8 @@ public class FirstLastTimestampService implements Service<FirstLastTimestampRequ
 
     @Override
     public FirstLastTimestampResponse invoke() {
-        List<String> componentIds = componentsDao.getComponentsFromAccount(accountId);
-        componentIds.retainAll(request.getComponents());
-
         response.setComponentsFirstLast(new ArrayList<>());
-        for (String componentId : componentIds) {
+        for (String componentId : request.getComponents()) {
             ComponentMeasurementTimestamps componentMeasurementTimestamps = new ComponentMeasurementTimestamps();
             componentMeasurementTimestamps.setComponentId(componentId);
             Observation[] observations = getTopObservation(componentId, true);

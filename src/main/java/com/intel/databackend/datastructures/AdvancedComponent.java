@@ -26,9 +26,17 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AdvancedComponent {
 
+    /*
+     * these 4 fields we receive from dashboard
+     */
     private String componentId;
     private String componentType;
     private String componentName;
+    private String dataType;
+
+    /*
+     below fields(values) are calculated - we not receive them from dashboard
+     */
     private Double max;
     private Double min;
     private Long count;
@@ -119,5 +127,17 @@ public class AdvancedComponent {
 
     public void setSamples(List<List<String>> samples) {
         this.samples = samples;
+    }
+
+    public boolean isNumericType() {
+        return getDataType().equals("Number");
+    }
+
+    public String getDataType() {
+        return dataType;
+    }
+
+    public void setDataType(String dataType) {
+        this.dataType = dataType;
     }
 }

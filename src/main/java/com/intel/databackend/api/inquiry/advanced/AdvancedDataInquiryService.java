@@ -17,41 +17,46 @@
 package com.intel.databackend.api.inquiry.advanced;
 
 import com.intel.databackend.api.Service;
-import com.intel.databackend.api.helpers.ComponentFilters;
 import com.intel.databackend.api.inquiry.DataRetrieveParams;
 import com.intel.databackend.api.inquiry.DataRetriever;
 import com.intel.databackend.api.inquiry.advanced.componentsbuilder.AdvancedComponentsBuilder;
 import com.intel.databackend.api.inquiry.advanced.componentsbuilder.ComponentsBuilderParams;
 import com.intel.databackend.api.inquiry.advanced.filters.AdvancedObservationFilterSelector;
 import com.intel.databackend.api.inquiry.advanced.filters.ObservationFilterSelector;
-import com.intel.databackend.datasources.dashboard.components.ComponentsDao;
 import com.intel.databackend.datasources.hbase.DataDao;
-import com.intel.databackend.datasources.dashboard.devices.DeviceDao;
-import com.intel.databackend.datasources.dashboard.utils.QueryFields;
-import com.intel.databackend.datasources.dashboard.utils.QueryParam;
+import com.intel.databackend.datastructures.AdvancedComponent;
 import com.intel.databackend.datastructures.ComponentDataType;
 import com.intel.databackend.datastructures.DeviceData;
 import com.intel.databackend.datastructures.requests.AdvDataInquiryRequest;
 import com.intel.databackend.datastructures.responses.AdvDataInquiryResponse;
 import com.intel.databackend.exceptions.DataInquiryException;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import static org.springframework.context.annotation.ScopedProxyMode.TARGET_CLASS;
+import static org.springframework.web.context.WebApplicationContext.SCOPE_REQUEST;
+
+@org.springframework.stereotype.Service
+@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
 public class AdvancedDataInquiryService implements Service<AdvDataInquiryRequest, AdvDataInquiryResponse> {
+    private static final Logger logger = LoggerFactory.getLogger(AdvancedDataInquiryService.class);
     private String accountId;
     private AdvDataInquiryRequest dataInquiryRequest;
-    private ComponentFilters componentFilters;
-
-    private static final Logger logger = LoggerFactory.getLogger(AdvancedDataInquiryService.class);
-
     private DataDao hbase;
-    private final ComponentsDao componentsDao;
-    private final DeviceDao deviceDao;
-
     private DataRetriever dataRetriever;
     private DataRetrieveParams dataRetrieveParams;
 
@@ -59,10 +64,8 @@ public class AdvancedDataInquiryService implements Service<AdvDataInquiryRequest
     private ObservationFilterSelector observationFilterSelector;
 
     @Autowired
-    public AdvancedDataInquiryService(DataDao hbase, ComponentsDao componentsDao, DeviceDao deviceDao) {
+    public AdvancedDataInquiryService(DataDao hbase) {
         this.hbase = hbase;
-        this.componentsDao = componentsDao;
-        this.deviceDao = deviceDao;
     }
 
     @Override
@@ -72,51 +75,56 @@ public class AdvancedDataInquiryService implements Service<AdvDataInquiryRequest
         this.dataRetrieveParams = new DataRetrieveParams(this.dataInquiryRequest, this.accountId);
         dataRetriever = new DataRetriever(hbase, dataRetrieveParams);
         observationFilterSelector = new AdvancedObservationFilterSelector(dataInquiryRequest);
-        componentFilters = new ComponentFilters(componentsDao, dataInquiryRequest.getDevCompAttributeFilter());
         return this;
     }
 
     @Override
     public AdvDataInquiryResponse invoke() throws DataInquiryException {
-
-        List<String> componentIds = getRequestedComponentIds();
-
         responseBuilder = new ResponseBuilder(dataInquiryRequest, accountId);
+        List<DeviceData> devicesData = new ArrayList<>(dataInquiryRequest.getDeviceDataList());
+        Map<String, ComponentDataType> componentsMetadata = fetchComponentDataType(devicesData);
 
-        if (componentIds != null && componentIds.size() > 0) {
-
-            Map<String, ComponentDataType> componentsMetadata = componentsDao.getAdvComponentsMetadata(accountId, componentIds);
-            componentIds = filterRequestedComponentIds(componentIds, componentsMetadata);
-
-            if (componentIds != null && componentIds.size() > 0) {
-                String[] measureAttributes;
-                if (dataInquiryRequest.hasRequestMeasuredAttributes()) {
-                    measureAttributes = getAttributesFromRequest();
-                } else {
-                    measureAttributes = getAllAttributes(componentIds);
-                }
-
-                dataRetrieveParams.setComponents(componentIds);
-                dataRetrieveParams.setComponentsAttributes(Arrays.asList(measureAttributes));
-                dataRetrieveParams.setComponentsMetadata(componentsMetadata);
-                dataRetriever.retrieveAndCount(observationFilterSelector);
-
-                List<DeviceData> devicesData = deviceDao.getDevicesFromAccount(accountId, componentIds);
-
-                if (!dataInquiryRequest.isCountOnly()) {
-                    ComponentsBuilderParams parameters = new ComponentsBuilderParams(dataInquiryRequest, measureAttributes);
-                    AdvancedComponentsBuilder advancedComponentsBuilder = new AdvancedComponentsBuilder(componentsMetadata, dataRetriever.getComponentObservations());
-                    advancedComponentsBuilder.appendComponentsDetails(devicesData, parameters);
-                }
-
-                responseBuilder.build(dataRetriever.getRowCount(), devicesData);
+        if (MapUtils.isNotEmpty(componentsMetadata)) {
+            String[] measureAttributes;
+            if (dataInquiryRequest.hasRequestMeasuredAttributes()) {
+                measureAttributes = getAttributesFromRequest();
+            } else {
+                measureAttributes = getAllAttributes(componentsMetadata.keySet());
             }
-        }
 
+            dataRetrieveParams.setComponentsAttributes(Arrays.asList(measureAttributes));
+            dataRetrieveParams.setComponentsMetadata(componentsMetadata);
+            dataRetriever.retrieveAndCount(observationFilterSelector);
+
+            if (!dataInquiryRequest.isCountOnly()) {
+                ComponentsBuilderParams parameters = new ComponentsBuilderParams(dataInquiryRequest, measureAttributes);
+                AdvancedComponentsBuilder advancedComponentsBuilder = new AdvancedComponentsBuilder(componentsMetadata, dataRetriever.getComponentObservations());
+                advancedComponentsBuilder.appendComponentsDetails(devicesData, parameters);
+            }
+
+            responseBuilder.build(dataRetriever.getRowCount(), devicesData);
+        }
         return responseBuilder.getDataInquiryResponse();
     }
 
-    private String[] getAllAttributes(List<String> componentIds) {
+    private Map<String, ComponentDataType> fetchComponentDataType(List<DeviceData> deviceDataList) {
+        Map<String, ComponentDataType> result = new HashMap<>();
+        for (DeviceData deviceData : deviceDataList) {
+            for (AdvancedComponent component : deviceData.getComponents()) {
+                ComponentDataType componentDataType = new ComponentDataType();
+                componentDataType.setComponentId(component.getComponentId());
+                componentDataType.setComponentName(component.getComponentName());
+                componentDataType.setComponentType(component.getComponentType());
+                componentDataType.setDataType(component.getDataType());
+                if (StringUtils.isNotEmpty(component.getComponentId())) {
+                    result.put(component.getComponentId(), componentDataType);
+                }
+            }
+        }
+        return result;
+    }
+
+    private String[] getAllAttributes(Collection<String> componentIds) {
         Set<String> allAttributes = new HashSet<>();
         for (String componentId : componentIds) {
             try {
@@ -140,50 +148,5 @@ public class AdvancedDataInquiryService implements Service<AdvDataInquiryRequest
             attributesSet.addAll(dataInquiryRequest.getMeasurementAttributeFilter().keySet());
         }
         return attributesSet.toArray(new String[attributesSet.size()]);
-    }
-
-    private List<String> getRequestedComponentIds() {
-        List<String> componentIds = dataInquiryRequest.getComponentIds();
-
-        List<String> accountsComponents = componentsDao.getComponentsByCustomParams(accountId, createFilters());
-
-        //If there are no components in request use components from database
-        if (dataInquiryRequest.hasEmptyComponentsIds()) {
-            componentIds = accountsComponents;
-        } else {
-            if (accountsComponents != null) {
-                componentIds.retainAll(accountsComponents);
-            }
-        }
-
-        logger.debug("Components selected: {}", componentIds);
-        return componentIds;
-    }
-
-    private List<QueryParam> createFilters() {
-        List<QueryParam> filters = new ArrayList<>();
-
-        if (dataInquiryRequest.getDeviceIds() != null && dataInquiryRequest.getDeviceIds().size() > 0) {
-            filters.add(new QueryParam(QueryFields.DEVICE_ID, dataInquiryRequest.getDeviceIds()));
-        }
-        if (dataInquiryRequest.getGatewayIds() != null && dataInquiryRequest.getGatewayIds().size() > 0) {
-            filters.add(new QueryParam(QueryFields.DEVICE_GATEWAY, dataInquiryRequest.getGatewayIds()));
-        }
-
-        //Select all components from account, if there are no filters in request
-        if (filters.isEmpty()) {
-            List<String> accountIdAsList = new ArrayList<String>();
-            accountIdAsList.add(accountId);
-            filters.add(new QueryParam(QueryFields.ACCOUNT_ID, accountIdAsList));
-        }
-
-        return filters;
-    }
-
-    private List<String> filterRequestedComponentIds(List<String> componentIds, Map<String, ComponentDataType> componentsMetadata) {
-        if (componentFilters.isFilterAvailable()) {
-            return componentFilters.filter(componentsMetadata, componentIds, accountId);
-        }
-        return componentIds;
     }
 }

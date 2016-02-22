@@ -18,6 +18,6 @@ package com.intel.databackend.api.inquiry.basic.validators;
 
 public interface ComponentsDataTypeValidator {
 
-    public boolean isValid(String componentId);
+    boolean isValid(String componentId);
 
 }

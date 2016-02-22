@@ -43,7 +43,7 @@ public class DataRequestValidator implements RequestValidator {
             return ErrorMsg.NO_START_OR_END_DATE;
         }
 
-        if (hasEmptyComponents()) {
+        if (hasEmptyComponentsWithDataType()) {
             return ErrorMsg.NO_COMPONENTS_PROVIDED;
         }
 
@@ -61,8 +61,8 @@ public class DataRequestValidator implements RequestValidator {
         return (dataInquiryRequest.getCountOnly() != null && dataInquiryRequest.getCountOnly() && dataInquiryRequest.getMaxPoints() != null);
     }
 
-    private boolean hasEmptyComponents()  {
-        return (dataInquiryRequest.getComponents() == null);
+    private boolean hasEmptyComponentsWithDataType()  {
+        return (dataInquiryRequest.getComponentsWithDataType() == null);
     }
 
     private boolean hasNotStartOrEndDate() {

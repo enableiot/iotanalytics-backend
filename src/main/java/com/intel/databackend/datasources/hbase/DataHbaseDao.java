@@ -26,6 +26,8 @@ import org.apache.hadoop.hbase.util.Bytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Repository;
 import org.trustedanalytics.hadoop.config.client.helper.Hbase;
 
 import javax.annotation.PostConstruct;
@@ -33,7 +35,7 @@ import javax.security.auth.login.LoginException;
 import java.io.IOException;
 import java.util.*;
 
-
+@Repository
 public class DataHbaseDao implements DataDao {
 
     private static final Logger logger = LoggerFactory.getLogger(DataHbaseDao.class);
@@ -55,7 +57,7 @@ public class DataHbaseDao implements DataDao {
     }
 
     @Autowired
-    public DataHbaseDao(String hbasePrefix) {
+    public DataHbaseDao(@Value("${vcap.application.name:local}") String hbasePrefix) {
         logger.info("Creating HBase. Zookeeper: ");
 
         this.tableName = hbasePrefix.toUpperCase() + DEVICE_MEASUREMENT;
