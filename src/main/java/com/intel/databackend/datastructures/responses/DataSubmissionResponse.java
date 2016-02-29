@@ -16,14 +16,13 @@
 
 package com.intel.databackend.datastructures.responses;
 
-import com.cedarsoftware.util.io.*;
-
+import com.cedarsoftware.util.io.JsonWriter;
 
 
 public class DataSubmissionResponse {
 
-  public String toString() {
-    return JsonWriter.objectToJson(this);
-  }
+    public String toString() {
+        return JsonWriter.objectToJson(this);
+    }
 
 }

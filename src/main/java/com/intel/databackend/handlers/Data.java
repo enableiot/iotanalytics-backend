@@ -41,13 +41,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -71,12 +65,17 @@ public class Data {
     private Service<FirstLastTimestampRequest, FirstLastTimestampResponse> firstLastTimestampService;
 
     private RequestValidator requestValidator;
+    
+    private static final String RESPONSE_LOG_ENTRY = "RESPONSE: {}";
+    private static final String REQUEST_LOG_ENTRY = "REQUEST: aid: {}";
+    private static final String DEBUG_LOG = "{}";
 
-    @RequestMapping(value="/v1/accounts/{accountId}/dataSubmission", method=RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody ResponseEntity dataSubmission(@PathVariable String accountId, @Valid @RequestBody DataSubmissionRequest request,
-                                                       BindingResult result) throws ServiceException, BindException {
-        logger.info("REQUEST: aid: {}", accountId);
-        logger.debug("{}", request);
+    @RequestMapping(value = "/v1/accounts/{accountId}/dataSubmission", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity dataSubmission(@PathVariable String accountId, @Valid @RequestBody DataSubmissionRequest request,
+                                  BindingResult result) throws ServiceException, BindException {
+        logger.info(REQUEST_LOG_ENTRY, accountId);
+        logger.debug(DEBUG_LOG, request);
 
         if (result.hasErrors()) {
             throw new BindException(result);
@@ -85,15 +84,17 @@ public class Data {
 
             dataSubmissionService.invoke();
             ResponseEntity res = new ResponseEntity<>(HttpStatus.CREATED);
-            logger.info("RESPONSE: {}", res.getStatusCode());
+            logger.info(RESPONSE_LOG_ENTRY, res.getStatusCode());
             return res;
         }
     }
 
-    @RequestMapping(value="/v1/accounts/{accountId}/dataInquiry", method=RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody ResponseEntity dataInquiry(@PathVariable String accountId, @RequestBody DataInquiryRequest request) throws ServiceException, VcapEnvironmentException {
-        logger.info("REQUEST: aid: {}", accountId);
-        logger.debug("{}",request);
+    @RequestMapping(value = "/v1/accounts/{accountId}/dataInquiry", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity dataInquiry(@PathVariable String accountId, @RequestBody DataInquiryRequest request)
+            throws ServiceException, VcapEnvironmentException {
+        logger.info(REQUEST_LOG_ENTRY, accountId);
+        logger.debug(DEBUG_LOG, request);
 
         requestValidator = new DataRequestValidator(request);
         requestValidator.validate();
@@ -102,15 +103,17 @@ public class Data {
         DataInquiryResponse dataInquiryResponse = basicDataInquiryService.invoke();
 
         ResponseEntity res = new ResponseEntity<DataInquiryResponse>(dataInquiryResponse, HttpStatus.OK);
-        logger.info("RESPONSE: {}", res.getStatusCode());
-        logger.debug("{}", dataInquiryResponse);
+        logger.info(RESPONSE_LOG_ENTRY, res.getStatusCode());
+        logger.debug(DEBUG_LOG, dataInquiryResponse);
         return res;
     }
 
-    @RequestMapping(value="/v1/accounts/{accountId}/dataInquiry/advanced", method=RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody ResponseEntity advancedDataInquiry(@PathVariable String accountId, @RequestBody final AdvDataInquiryRequest request) throws ServiceException, VcapEnvironmentException {
-        logger.info("REQUEST: aid: {}", accountId);
-        logger.debug("{}", request);
+    @RequestMapping(value = "/v1/accounts/{accountId}/dataInquiry/advanced", method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity advancedDataInquiry(@PathVariable String accountId, @RequestBody final AdvDataInquiryRequest request) throws ServiceException, VcapEnvironmentException {
+        logger.info(REQUEST_LOG_ENTRY, accountId);
+        logger.debug(DEBUG_LOG, request);
 
         requestValidator = new AdvanceDataRequestValidator(request);
         requestValidator.validate();
@@ -119,16 +122,17 @@ public class Data {
         AdvDataInquiryResponse dataInquiryResponse = advancedDataInquiryService.invoke();
 
         ResponseEntity res = new ResponseEntity<AdvDataInquiryResponse>(dataInquiryResponse, HttpStatus.OK);
-        logger.info("RESPONSE: {}", res.getStatusCode());
-        logger.debug("{}", dataInquiryResponse);
+        logger.info(RESPONSE_LOG_ENTRY, res.getStatusCode());
+        logger.debug(DEBUG_LOG, dataInquiryResponse);
         return res;
     }
 
-    @RequestMapping(value="/v1/accounts/{accountId}/inquiryComponentFirstAndLast")
-    public @ResponseBody ResponseEntity firstLastMeasurementTimestamp(@PathVariable String accountId,
-                                                                      @Valid @RequestBody final FirstLastTimestampRequest request,
-                                                                      BindingResult result) throws VcapEnvironmentException, ServiceException, BindException {
-        logger.info("REQUEST: aid: {}", accountId);
+    @RequestMapping(value = "/v1/accounts/{accountId}/inquiryComponentFirstAndLast")
+    @ResponseBody
+    public ResponseEntity firstLastMeasurementTimestamp(@PathVariable String accountId,
+                                                 @Valid @RequestBody final FirstLastTimestampRequest request,
+                                                 BindingResult result) throws VcapEnvironmentException, ServiceException, BindException {
+        logger.info(REQUEST_LOG_ENTRY, accountId);
         logger.debug(request.toString());
 
         if (result.hasErrors()) {
@@ -137,8 +141,8 @@ public class Data {
             firstLastTimestampService.withParams(accountId, request);
             FirstLastTimestampResponse firstLastTimestampResponse = firstLastTimestampService.invoke();
             ResponseEntity res = new ResponseEntity<>(firstLastTimestampResponse, HttpStatus.OK);
-            logger.info("RESPONSE: {}", res.getStatusCode());
-            logger.debug("{}", firstLastTimestampResponse);
+            logger.info(RESPONSE_LOG_ENTRY, res.getStatusCode());
+            logger.debug(DEBUG_LOG, firstLastTimestampResponse);
             return res;
         }
     }

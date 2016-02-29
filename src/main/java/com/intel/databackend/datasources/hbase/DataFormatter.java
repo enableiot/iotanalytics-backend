@@ -21,11 +21,13 @@ import org.apache.hadoop.hbase.util.Bytes;
 
 final class DataFormatter {
 
-    private final static String GPS_X_COLUMN = "locX";
-    private final static String GPS_Y_COLUMN = "locY";
-    private final static String GPS_Z_COLUMN = "locZ";
+    private static final String GPS_X_COLUMN = "locX";
+    private static final String GPS_Y_COLUMN = "locY";
+    private static final String GPS_Z_COLUMN = "locZ";
 
-    private DataFormatter(){
+    private static final String KEY_DELIMITER = "\0";
+
+    private DataFormatter() {
 
     }
 
@@ -47,12 +49,12 @@ final class DataFormatter {
     }
 
     public static Long getTimeFromKey(String key) {
-        String[] parts = key.split("\0");
+        String[] parts = key.split(KEY_DELIMITER);
         return Long.parseLong(parts[2].trim());
     }
 
     public static String getAttrNameFromCell(Cell cell) {
-        String[] parts = Bytes.toString(cell.getRowArray()).split("\0");
+        String[] parts = Bytes.toString(cell.getRowArray()).split(KEY_DELIMITER);
         return parts[cell.getRowOffset() - 1].split(":")[1];
     }
 

@@ -22,7 +22,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
 
 
-
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AdvancedComponent {
 
@@ -130,7 +129,7 @@ public class AdvancedComponent {
     }
 
     public boolean isNumericType() {
-        return getDataType().equals("Number");
+        return "Number".equals(getDataType());
     }
 
     public String getDataType() {

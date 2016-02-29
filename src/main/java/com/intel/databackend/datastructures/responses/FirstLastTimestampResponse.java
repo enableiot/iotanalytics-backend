@@ -18,11 +18,9 @@ package com.intel.databackend.datastructures.responses;
 
 import com.cedarsoftware.util.io.JsonWriter;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.intel.databackend.datastructures.Component;
 import com.intel.databackend.datastructures.ComponentMeasurementTimestamps;
 
 import java.util.List;
-
 
 
 @JsonInclude(JsonInclude.Include.NON_NULL)

@@ -32,19 +32,21 @@ public class ComponentsBuilder {
     private final ComponentsDataTypeValidator componentsDataTypeValidator;
     private final SampleDataRetriever sampleDataRetriever;
 
-    public ComponentsBuilder(ComponentsDataTypeValidator componentsDataTypeValidator, SampleDataRetriever sampleDataRetriever) {
+    public ComponentsBuilder(ComponentsDataTypeValidator componentsDataTypeValidator,
+                             SampleDataRetriever sampleDataRetriever) {
         this.componentsDataTypeValidator = componentsDataTypeValidator;
         this.sampleDataRetriever = sampleDataRetriever;
     }
 
-    public List<Component> build(Map<String, Observation[]> componentObservations) throws IllegalDataInquiryArgumentException
-    {
+    public List<Component> build(Map<String, Observation[]> componentObservations)
+            throws IllegalDataInquiryArgumentException {
         List<Component> components = new ArrayList<>();
         for (Map.Entry<String, Observation[]> entry : componentObservations.entrySet()) {
             String componentId = entry.getKey();
 
-            if (!componentsDataTypeValidator.isValid(componentId)){
-                throw new IllegalDataInquiryArgumentException(ErrorMsg.DATA_TYPE_NOT_SUPPORTED_FOR_BUCKETING, 500);
+            if (!componentsDataTypeValidator.isValid(componentId)) {
+                throw new IllegalDataInquiryArgumentException(ErrorMsg.DATA_TYPE_NOT_SUPPORTED_FOR_BUCKETING,
+                        ErrorMsg.DEFAULT_ERROR_CODE);
             }
 
             Component component = new Component();
@@ -57,8 +59,6 @@ public class ComponentsBuilder {
 
         return components;
     }
-
-
 
 
 }

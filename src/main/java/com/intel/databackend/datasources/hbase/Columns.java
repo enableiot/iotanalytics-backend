@@ -20,18 +20,18 @@ import org.apache.hadoop.hbase.util.Bytes;
 
 final class Columns {
 
-    public final static String COLUMN_FAMILY = "data";
-    public final static byte[] BYTES_COLUMN_FAMILY = Bytes.toBytes(COLUMN_FAMILY);
+    public static final String COLUMN_FAMILY = "data";
+    public static final byte[] BYTES_COLUMN_FAMILY = Bytes.toBytes(COLUMN_FAMILY);
 
-    public final static String DATA_COLUMN = "measure_val";
-    public final static byte[] BYTES_DATA_COLUMN = Bytes.toBytes(DATA_COLUMN);
+    public static final String DATA_COLUMN = "measure_val";
+    public static final byte[] BYTES_DATA_COLUMN = Bytes.toBytes(DATA_COLUMN);
 
-    public final static String ATTRIBUTE_COLUMN_PREFIX = "attibute:";
-    public final static byte[] BYTES_ATTRIBUTE_COLUMN_PREFIX = Bytes.toBytes("attibute:");
+    public static final String ATTRIBUTE_COLUMN_PREFIX = "attibute:";
+    public static final byte[] BYTES_ATTRIBUTE_COLUMN_PREFIX = Bytes.toBytes(ATTRIBUTE_COLUMN_PREFIX);
 
-    public final static short GPS_COLUMN_SIZE = 3;
+    public static final short GPS_COLUMN_SIZE = 3;
 
-    private Columns(){
+    private Columns() {
 
     }
 }

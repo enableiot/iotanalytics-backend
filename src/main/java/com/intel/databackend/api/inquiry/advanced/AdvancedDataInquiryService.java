@@ -40,12 +40,13 @@ import org.springframework.context.annotation.Scope;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
+
 
 import static org.springframework.context.annotation.ScopedProxyMode.TARGET_CLASS;
 import static org.springframework.web.context.WebApplicationContext.SCOPE_REQUEST;
@@ -60,7 +61,6 @@ public class AdvancedDataInquiryService implements Service<AdvDataInquiryRequest
     private DataRetriever dataRetriever;
     private DataRetrieveParams dataRetrieveParams;
 
-    private ResponseBuilder responseBuilder;
     private ObservationFilterSelector observationFilterSelector;
 
     @Autowired
@@ -80,7 +80,7 @@ public class AdvancedDataInquiryService implements Service<AdvDataInquiryRequest
 
     @Override
     public AdvDataInquiryResponse invoke() throws DataInquiryException {
-        responseBuilder = new ResponseBuilder(dataInquiryRequest, accountId);
+        ResponseBuilder responseBuilder = new ResponseBuilder(dataInquiryRequest, accountId);
         List<DeviceData> devicesData = new ArrayList<>(dataInquiryRequest.getDeviceDataList());
         Map<String, ComponentDataType> componentsMetadata = fetchComponentDataType(devicesData);
 
@@ -98,7 +98,8 @@ public class AdvancedDataInquiryService implements Service<AdvDataInquiryRequest
 
             if (!dataInquiryRequest.isCountOnly()) {
                 ComponentsBuilderParams parameters = new ComponentsBuilderParams(dataInquiryRequest, measureAttributes);
-                AdvancedComponentsBuilder advancedComponentsBuilder = new AdvancedComponentsBuilder(componentsMetadata, dataRetriever.getComponentObservations());
+                AdvancedComponentsBuilder advancedComponentsBuilder =
+                        new AdvancedComponentsBuilder(componentsMetadata, dataRetriever.getComponentObservations());
                 advancedComponentsBuilder.appendComponentsDetails(devicesData, parameters);
             }
 
@@ -128,7 +129,9 @@ public class AdvancedDataInquiryService implements Service<AdvDataInquiryRequest
         Set<String> allAttributes = new HashSet<>();
         for (String componentId : componentIds) {
             try {
-                String[] attributeNames = hbase.scanForAttributeNames(accountId, componentId, dataInquiryRequest.getStartTimestamp(), dataInquiryRequest.getEndTimestamp());
+                String[] attributeNames = hbase.scanForAttributeNames(accountId, componentId,
+                        dataInquiryRequest.getStartTimestamp(), dataInquiryRequest.getEndTimestamp());
+
                 for (String name : attributeNames) {
                     allAttributes.add(name);
                 }

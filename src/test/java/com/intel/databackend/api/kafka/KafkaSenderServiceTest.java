@@ -21,6 +21,7 @@ import com.intel.databackend.datastructures.Observation;
 import com.intel.databackend.exceptions.VcapEnvironmentException;
 import kafka.admin.AdminUtils;
 import org.I0Itec.zkclient.ZkClient;
+import org.I0Itec.zkclient.exception.ZkException;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.junit.After;
 import org.junit.Before;
@@ -33,7 +34,6 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Arrays;
 
@@ -80,7 +80,7 @@ public class KafkaSenderServiceTest {
     @Test
     public void testCreateTopic_topic_exist() throws VcapEnvironmentException {
         kafkaSenderService.createTopic();
-        kafkaSenderService.finalize();
+        kafkaSenderService.close();
         Mockito.verify(kafkaProducer).close();
         Mockito.verifyNoMoreInteractions(kafkaProducer);
     }
@@ -89,7 +89,7 @@ public class KafkaSenderServiceTest {
     public void testCreateTopic_topic_not_exist() throws VcapEnvironmentException {
         Mockito.when(AdminUtils.topicExists(zkClient, TOPIC)).thenReturn(false);
         kafkaSenderService.createTopic();
-        kafkaSenderService.finalize();
+        kafkaSenderService.close();
         Mockito.verify(kafkaProducer).close();
         Mockito.verifyNoMoreInteractions(kafkaProducer);
 
@@ -97,9 +97,9 @@ public class KafkaSenderServiceTest {
 
     @Test
     public void testCreateTopic_error_handling() throws Exception {
-        Mockito.when(AdminUtils.topicExists(zkClient, TOPIC)).thenThrow(new NullPointerException());
+        Mockito.when(AdminUtils.topicExists(zkClient, TOPIC)).thenThrow(new ZkException());
         kafkaSenderService.createTopic();
-        kafkaSenderService.finalize();
+        kafkaSenderService.close();
         Mockito.verifyNoMoreInteractions(kafkaProducer);
     }
 

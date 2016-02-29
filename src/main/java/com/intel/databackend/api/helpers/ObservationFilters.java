@@ -32,7 +32,7 @@ public class ObservationFilters {
 
     public Observation[] filterByMeasurementAttrs(Observation[] obs, Map<String, List<String>> measurementAttributeFilter) {
         logger.debug("Filtering by measure attributes");
-        List<Observation> filtered = new ArrayList<Observation>();
+        List<Observation> filtered = new ArrayList<>();
         for (Observation o : obs) {
             boolean omit = false;
             for (String key : measurementAttributeFilter.keySet()) {
@@ -42,21 +42,18 @@ public class ObservationFilters {
                     break;
                 }
             }
-            if(!omit) {
+            if (!omit) {
                 filtered.add(o);
-            } else {
-                continue;
             }
         }
-        obs = filtered.toArray(new Observation[filtered.size()]);
-        return obs;
+        return filtered.toArray(new Observation[filtered.size()]);
     }
 
     public Observation[] filterByValue(Observation[] obs, Map<String, List<String>> valueFilter, ComponentDataType componentDataType) {
         logger.debug("Filtering by value ");
         List<String> acceptedValues = valueFilter.get("value");
         logger.debug("Accepted values: {}", acceptedValues);
-        List<Observation> filtered = new ArrayList<Observation>();
+        List<Observation> filtered = new ArrayList<>();
         for (Observation o : obs) {
             // Production did not take care of dataType. Tests treat it as expected.
             if (componentDataType != null) {
@@ -65,8 +62,7 @@ public class ObservationFilters {
                 addWhenStringEqual(acceptedValues, filtered, o);
             }
         }
-        obs = filtered.toArray(new Observation[filtered.size()]);
-        return obs;
+        return filtered.toArray(new Observation[filtered.size()]);
     }
 
     private void addWhenNumbersEqual(List<String> acceptedValues, List<Observation> filtered, Observation o) {

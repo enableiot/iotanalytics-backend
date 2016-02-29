@@ -36,7 +36,8 @@ public class AdvancedComponentsBuilder {
     private final Map<String, Observation[]> componentObservations;
     private ComponentsBuilderParams parameters;
 
-    public AdvancedComponentsBuilder(Map<String, ComponentDataType> componentsMetadata, Map<String, Observation[]> componentObservations) {
+    public AdvancedComponentsBuilder(Map<String, ComponentDataType> componentsMetadata,
+                                     Map<String, Observation[]> componentObservations) {
         this.componentObservations = componentObservations;
         this.componentsMetadata = componentsMetadata;
     }
@@ -55,7 +56,8 @@ public class AdvancedComponentsBuilder {
                     continue;
                 }
                 sortObservations(observations, componentsMetadata.get(component.getComponentId()));
-                AdvancedComponentBuilder componentBuilder = new AdvancedComponentBuilder(observations, componentsMetadata, parameters);
+                AdvancedComponentBuilder componentBuilder =
+                        new AdvancedComponentBuilder(observations, componentsMetadata, parameters);
 
                 componentBuilder.appendAggregations(component, first);
                 componentBuilder.appendSamples(component, first);

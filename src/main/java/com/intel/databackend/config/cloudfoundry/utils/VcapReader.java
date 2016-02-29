@@ -24,8 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class VcapReader
-{
+public class VcapReader {
     private static final Logger logger = LoggerFactory.getLogger(VcapReader.class);
 
     public static final String VCAP_SERVICES = "VCAP_SERVICES";
@@ -46,7 +45,7 @@ public class VcapReader
                 return new JSONObject(vcapServices).getJSONArray(type).getJSONObject(0).getJSONObject(CREDENTIALS);
             }
         } catch (JSONException e) {
-            logger.warn("Cannot find service of type - {} in VCAP_SERVICES", type);
+            logger.warn("Cannot find service of type - {}", type);
         }
         return null;
     }
@@ -56,7 +55,7 @@ public class VcapReader
             if (vcapServices != null) {
                 JSONArray upses = new JSONObject(vcapServices).getJSONArray(USER_PROVIDED);
 
-                for(int i = 0; i < upses.length(); i++) {
+                for (int i = 0; i < upses.length(); i++) {
                     JSONObject ups = upses.getJSONObject(i);
                     if (ups.getString(NAME).equals(name)) {
                         return ups.getJSONObject(CREDENTIALS);
@@ -64,7 +63,7 @@ public class VcapReader
                 }
             }
         } catch (JSONException e) {
-            logger.warn("Cannot find user provided service - {} in VCAP_SERVICES",  name);
+            logger.warn("Cannot find user provided service - {} in VCAP_SERVICES", name);
             logger.warn(e.getMessage());
         }
         return null;

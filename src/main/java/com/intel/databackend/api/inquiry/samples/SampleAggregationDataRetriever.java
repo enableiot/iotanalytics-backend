@@ -29,12 +29,10 @@ public class SampleAggregationDataRetriever implements SampleDataRetriever {
     private static final Logger logger = LoggerFactory.getLogger(SampleAggregationDataRetriever.class);
 
     private final long startDate;
-    private final long endDate;
     private final long bucketTimePeriod;
 
     public SampleAggregationDataRetriever(DataRetrieveParams dataRetrieveParams) {
         this.startDate = dataRetrieveParams.getStartDate();
-        this.endDate = dataRetrieveParams.getEndDate();
         this.bucketTimePeriod = calculateBucketTimePeriod(dataRetrieveParams);
 
         logger.debug("Max points = {}", dataRetrieveParams.getMaxPoints());
@@ -47,7 +45,7 @@ public class SampleAggregationDataRetriever implements SampleDataRetriever {
         //Stream based solution could be easier to parallelize (and read).
 
         List<List<String>> sampleObservationList = new ArrayList<>();
-        if(observations.length == 0) {
+        if (observations.length == 0) {
             return sampleObservationList;
         }
         double sumValue = 0.0;
@@ -56,7 +54,7 @@ public class SampleAggregationDataRetriever implements SampleDataRetriever {
         long previousBucket = (observations[0].getOn() - startDate) / bucketTimePeriod;
         for (Observation observation : observations) {
             long curBucket = (observation.getOn() - startDate) / bucketTimePeriod;
-            if(curBucket == previousBucket) {
+            if (curBucket == previousBucket) {
                 sumValue = updateSum(sumValue, observation);
                 sumTime += observation.getOn();
                 count++;
@@ -86,17 +84,19 @@ public class SampleAggregationDataRetriever implements SampleDataRetriever {
         sampleObservationList.add(samples);
     }
 
-    private static double updateSum(double sumValue, Observation o) {
+    private static double updateSum(double value, Observation o) {
+        double sum = value;
         try {
-            sumValue += Double.parseDouble(o.getValue());
-        } catch (Exception e) {
+            sum += Double.parseDouble(o.getValue());
+        } catch (NumberFormatException e) {
             logger.warn("Obs value parsing fault - not a double");
         }
-        return sumValue;
+        return sum;
     }
 
     private static long calculateBucketTimePeriod(DataRetrieveParams dataRetrieveParams) {
-        long flooredBucket = (dataRetrieveParams.getEndDate() - dataRetrieveParams.getStartDate()) / dataRetrieveParams.getMaxPoints();
+        long flooredBucket = (dataRetrieveParams.getEndDate() - dataRetrieveParams.getStartDate())
+                / dataRetrieveParams.getMaxPoints();
         return Math.max(flooredBucket, 1);
     }
 }

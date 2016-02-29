@@ -17,9 +17,11 @@ package com.intel.databackend.api.kafka;
 
 import com.intel.databackend.config.ServiceConfigProvider;
 import com.intel.databackend.datastructures.Observation;
+import com.intel.databackend.exceptions.VcapEnvironmentException;
 import kafka.admin.AdminUtils;
 import kafka.utils.ZKStringSerializer$;
 import org.I0Itec.zkclient.ZkClient;
+import org.I0Itec.zkclient.exception.ZkException;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -40,15 +42,15 @@ public class KafkaSenderService implements KafkaService {
 
     private static final Logger logger = LoggerFactory.getLogger(KafkaService.class);
 
-    private String topic = null;
+    private String topic;
+
+    @Autowired
+    private ServiceConfigProvider serviceConfigProvider;
 
     @Autowired
     public KafkaSenderService(KafkaProducer<String, Observation> kafkaProducer) {
         this.kafkaProducer = kafkaProducer;
     }
-
-    @Autowired
-    private ServiceConfigProvider serviceConfigProvider;
 
     @PostConstruct
     public void createTopic() {
@@ -69,7 +71,7 @@ public class KafkaSenderService implements KafkaService {
                 } else {
                     logger.info("Topic: {} exist and will be use for pushing messages", topic);
                 }
-            } catch (Exception e) {
+            } catch (ZkException | VcapEnvironmentException e) {
                 logger.error("error during topic creation! Topic: {}, Broker URI: {}. KafkaSenderService will be unavailable!",
                         topic, brokerURI, e);
                 kafkaProducer = null;
@@ -85,7 +87,8 @@ public class KafkaSenderService implements KafkaService {
     public void send(List<Observation> observations) {
         if (kafkaProducer != null) {
             observations.stream()
-                    .forEach(observation -> kafkaProducer.send(new ProducerRecord<>(topic, observation), getSendResultCallback()));
+                    .forEach(observation ->
+                            kafkaProducer.send(new ProducerRecord<>(topic, observation), getSendResultCallback()));
         }
     }
 
@@ -105,7 +108,7 @@ public class KafkaSenderService implements KafkaService {
     }
 
     @PreDestroy
-    protected void finalize() {
+    protected void close() {
         if (kafkaProducer != null) {
             kafkaProducer.close();
         }

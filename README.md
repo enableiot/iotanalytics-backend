@@ -25,7 +25,9 @@ To install AA backend in your Trusted Analytics Platform space, login into TAP a
 
 1. Create instances with specified name for each of required services from marketplace:
 
-    * CDH broker with name mycdh
+    * Hbase broker with name myhbase
+    * Hdfs broker with name myhdfs
+    * Kafka broker with name mykafka
     * Zookeeper broker with name myzookeeper
     
 1. Create following user-provided services with properties filled with real values:

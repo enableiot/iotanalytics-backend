@@ -41,18 +41,18 @@ public class AdvancedDataInquiryServiceTest {
     private AdvDataInquiryRequest request;
 
     @Before
-    public void SetUp(){
+    public void SetUp() {
         dataDaoMock = Mockito.mock(DataDao.class);
 
         accountId = java.util.UUID.randomUUID().toString();
         request = new AdvDataInquiryRequest();
         request.setStartTimestamp(1L);
         request.setEndTimestamp(1L);
-        advancedDataInquiryService =  new AdvancedDataInquiryService(dataDaoMock);
+        advancedDataInquiryService = new AdvancedDataInquiryService(dataDaoMock);
     }
 
     @Test
-    public void Invoke_ComponentIdsNull_ReturnsEmptyAdvInquiryResponse() throws Exception{
+    public void Invoke_ComponentIdsNull_ReturnsEmptyAdvInquiryResponse() throws Exception {
         DeviceData deviceData = new DeviceData();
         deviceData.setComponents(Arrays.asList(new AdvancedComponent()));
         request.setDeviceDataList(Arrays.asList(deviceData));
@@ -71,7 +71,7 @@ public class AdvancedDataInquiryServiceTest {
     }
 
     @Test
-    public void Invoke_RequestDataProvidedCountOnlyFalse_ReturnsData() throws Exception{
+    public void Invoke_RequestDataProvidedCountOnlyFalse_ReturnsData() throws Exception {
         //ARRANGE
         Observation observation = new Observation(accountId, "cid", 1L, "value");
         Observation[] observations = new Observation[1];
@@ -121,7 +121,7 @@ public class AdvancedDataInquiryServiceTest {
     }
 
     @Test
-    public void Invoke_RequestDataProvidedCountOnly_SetsAccountIdInData() throws Exception{
+    public void Invoke_RequestDataProvidedCountOnly_SetsAccountIdInData() throws Exception {
         //ARRANGE
         Observation observation = new Observation(accountId, "cid", 1L, "value");
         Observation[] observations = new Observation[1];
@@ -155,6 +155,6 @@ public class AdvancedDataInquiryServiceTest {
 
         //ASSERT
         assertEquals(accountId, response.getAccountId());
-        assertEquals((Long)1L, response.getRowCount());
+        assertEquals((Long) 1L, response.getRowCount());
     }
 }

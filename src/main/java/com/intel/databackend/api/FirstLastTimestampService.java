@@ -21,8 +21,6 @@ import com.intel.databackend.datastructures.ComponentMeasurementTimestamps;
 import com.intel.databackend.datastructures.Observation;
 import com.intel.databackend.datastructures.requests.FirstLastTimestampRequest;
 import com.intel.databackend.datastructures.responses.FirstLastTimestampResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 
@@ -34,8 +32,6 @@ import static org.springframework.web.context.WebApplicationContext.SCOPE_REQUES
 @org.springframework.stereotype.Service
 @Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
 public class FirstLastTimestampService implements Service<FirstLastTimestampRequest, FirstLastTimestampResponse> {
-
-    private static final Logger logger = LoggerFactory.getLogger(FirstLastTimestampService.class);
 
     private String accountId;
     private FirstLastTimestampRequest request;
@@ -83,12 +79,12 @@ public class FirstLastTimestampService implements Service<FirstLastTimestampRequ
 
     private Observation[] getTopObservation(String component, boolean first) {
         return hbase.scan(accountId, component,
-                        0L,
-                        Long.MAX_VALUE,
-                        false,
-                        null,
-                        first,
-                        1);
+                0L,
+                Long.MAX_VALUE,
+                false,
+                null,
+                first,
+                1);
     }
 
 

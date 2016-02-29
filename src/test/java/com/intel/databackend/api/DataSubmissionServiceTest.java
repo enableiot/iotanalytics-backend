@@ -25,8 +25,6 @@ import com.intel.databackend.exceptions.MissingDataSubmissionArgumentException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,16 +43,16 @@ public class DataSubmissionServiceTest {
 
 
     @Before
-    public void SetUp(){
+    public void SetUp() {
         dataDaoMock = Mockito.mock(DataDao.class);
         kafkaServiceMock = Mockito.spy(KafkaService.class);
         accountId = "acc1";
         request = new DataSubmissionRequest();
-        dataSubmissionService =  new DataSubmissionService(dataDaoMock, kafkaServiceMock);
+        dataSubmissionService = new DataSubmissionService(dataDaoMock, kafkaServiceMock);
     }
 
-    @Test(expected=MissingDataSubmissionArgumentException.class)
-    public void Invoke_RequestDataNull_ReturnsBadRequest() throws Exception{
+    @Test(expected = MissingDataSubmissionArgumentException.class)
+    public void Invoke_RequestDataNull_ReturnsBadRequest() throws Exception {
         //ARRANGE
         dataSubmissionService.withParams(accountId, request);
 
@@ -64,7 +62,7 @@ public class DataSubmissionServiceTest {
     }
 
     @Test
-    public void Invoke_RequestDataProvided_SetsAccountIdInData() throws Exception{
+    public void Invoke_RequestDataProvided_SetsAccountIdInData() throws Exception {
         //ARRANGE
         Observation observation = new Observation("oldAid", "cid", 1L, "value");
         List<Observation> data = new ArrayList<>();

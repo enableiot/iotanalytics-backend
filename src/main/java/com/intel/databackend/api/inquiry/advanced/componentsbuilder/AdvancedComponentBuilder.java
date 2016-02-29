@@ -39,24 +39,30 @@ public class AdvancedComponentBuilder {
     private static final String LON = "lon";
     private static final String ALT = "alt";
 
+    private static final int ONE_COORDINATE = 1;
+    private static final int TWO_COORDINATES = 2;
+    private static final int THREE_COORDINATES = 3;
+
     private final Observation[] observations;
 
     private final Map<String, ComponentDataType> componentsMetadata;
 
     private final ComponentsBuilderParams parameters;
 
-    public AdvancedComponentBuilder(Observation[] observations, Map<String, ComponentDataType> componentsMetadata, ComponentsBuilderParams parameters) {
+    public AdvancedComponentBuilder(Observation[] observations, Map<String, ComponentDataType> componentsMetadata,
+                                    ComponentsBuilderParams parameters) {
         this.observations = observations;
         this.componentsMetadata = componentsMetadata;
         this.parameters = parameters;
     }
 
     public void appendAggregations(AdvancedComponent component, Long first) {
-        Long last = countUpperLimit(first,  parameters.getComponentRowLimit());
+        Long last = countUpperLimit(first, parameters.getComponentRowLimit());
         if (AggregationCalculator.includeAggregation(parameters.getAggregations())) {
-            logger.debug("Inserting aggregations for component {} from: {}, to: {}", component.getComponentId(), first, last);
+            logger.debug("Add aggregations for component {} from: {}, to: {}", component.getComponentId(), first, last);
 
-            AggregationCalculator aggregationCalculator = new AggregationCalculator(component.getComponentId(), observations, componentsMetadata);
+            AggregationCalculator aggregationCalculator =
+                    new AggregationCalculator(component.getComponentId(), observations, componentsMetadata);
             AggregationResult aggregationResult = aggregationCalculator.generateAggregations(first, last);
             aggregationResult.addToComponent(component);
         }
@@ -65,9 +71,10 @@ public class AdvancedComponentBuilder {
     public void appendSamples(AdvancedComponent component, Long first) {
         Long last = countUpperLimit(first, parameters.getComponentRowLimit());
         if (!AggregationCalculator.returnsAggregationOnly(parameters.getAggregations())) {
-            logger.debug("Inserting samples for component {} from - {}, to - {}", component.getComponentId(), first, last);
+            logger.debug("Add samples for component {} from - {}, to - {}", component.getComponentId(), first, last);
 
-            SampleDataRetriever sampleDataRetriever = new SamplePlainDataRetriever(parameters.getReturnedMeasureAttributes());
+            SampleDataRetriever sampleDataRetriever =
+                    new SamplePlainDataRetriever(parameters.getReturnedMeasureAttributes());
             component.setSamples(sampleDataRetriever.get(observations, first, last));
             component.setSamplesHeader(prepareSamplesHeader());
         }
@@ -79,13 +86,13 @@ public class AdvancedComponentBuilder {
         samplesHeader.add(Observation.VALUE);
         if (observations != null && observations.length > 0) {
             int maxCoordinatesCount = Common.getMaxCoordinatesCount(observations);
-            if (maxCoordinatesCount >= 1) {
+            if (maxCoordinatesCount >= ONE_COORDINATE) {
                 samplesHeader.add(LAT);
             }
-            if (maxCoordinatesCount >= 2) {
+            if (maxCoordinatesCount >= TWO_COORDINATES) {
                 samplesHeader.add(LON);
             }
-            if (maxCoordinatesCount >= 3) {
+            if (maxCoordinatesCount >= THREE_COORDINATES) {
                 samplesHeader.add(ALT);
             }
         }

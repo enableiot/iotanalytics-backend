@@ -20,15 +20,13 @@ import com.intel.databackend.datastructures.AdvancedComponent;
 
 public class AggregationResult {
 
-    private final String componentId;
     private Double min;
     private Double max;
     private Double sum;
     private Double sumOfSquares;
     private long count;
 
-    public AggregationResult(String componentId) {
-        this.componentId = componentId;
+    public AggregationResult() {
     }
 
     public Double getMin() {

@@ -53,11 +53,8 @@ public class BasicDataInquiryService implements Service<DataInquiryRequest, Data
 
     private String accountId;
     private DataInquiryRequest dataInquiryRequest;
-    private DataInquiryResponse dataInquiryResponse;
-    
-    private DataDao hbase;
 
-    private ResponseBuilder responseBuilder;
+    private DataDao hbase;
 
     private Map<String, ComponentDataType> componentsMetadata;
 
@@ -94,9 +91,7 @@ public class BasicDataInquiryService implements Service<DataInquiryRequest, Data
                 createComponents();
             }
 
-            dataInquiryResponse = buildOutputMessage();
-
-            return dataInquiryResponse;
+            return buildOutputMessage();
         } catch (IllegalDataInquiryArgumentException ex) {
             logger.warn("Wrong data inquiry parameter", ex);
             throw new DataInquiryException(ex);
@@ -120,7 +115,7 @@ public class BasicDataInquiryService implements Service<DataInquiryRequest, Data
     }
 
     private DataInquiryResponse buildOutputMessage() {
-        responseBuilder = new ResponseBuilder(accountId, dataRetriever.getRowCount(), outputComponents);
+        ResponseBuilder responseBuilder = new ResponseBuilder(accountId, dataRetriever.getRowCount(), outputComponents);
         return responseBuilder.getDataInquiryResponse();
     }
 
@@ -129,6 +124,6 @@ public class BasicDataInquiryService implements Service<DataInquiryRequest, Data
     }
 
     private boolean shouldGenerateAggregations() {
-        return (dataInquiryRequest.getMaxPoints() != null && dataInquiryRequest.getMaxPoints() > 0);
+        return dataInquiryRequest.getMaxPoints() != null && dataInquiryRequest.getMaxPoints() > 0;
     }
 }

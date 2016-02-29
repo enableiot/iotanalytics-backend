@@ -37,9 +37,9 @@ public class DataInquiryRequest {
     private List<String> componentAttributes;
 
     private Boolean queryMeasureLocation;
-    
+
     public String toString() {
-      return JsonWriter.objectToJson(this);
+        return JsonWriter.objectToJson(this);
     }
 
     public Long getStartDate() {

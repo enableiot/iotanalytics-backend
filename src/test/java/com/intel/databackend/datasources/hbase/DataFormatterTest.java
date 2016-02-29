@@ -49,7 +49,7 @@ public class DataFormatterTest {
 
     @Test
     public void Invoke_DataFormatter_fixStopForExclusiveScan() {
-        assert  DataFormatter.fixStopForExclusiveScan(99L, 100L) == 101L;
-        assert  DataFormatter.fixStopForExclusiveScan(105L, 100L) == 100L;
+        assert DataFormatter.fixStopForExclusiveScan(99L, 100L) == 101L;
+        assert DataFormatter.fixStopForExclusiveScan(105L, 100L) == 100L;
     }
 }

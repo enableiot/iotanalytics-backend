@@ -17,13 +17,16 @@
 package com.intel.databackend.exceptions;
 
 
-public class ErrorMsg {
+public final class ErrorMsg {
 
-    public static final String COUNT_ONLY_WITH_MAX_POINTS_SELECTED = "Illegal combination of parameters. " +
-            "Both count only and maxPoints selected.";
+    public static final int DEFAULT_ERROR_CODE = 500;
 
-    public static final String QUERY_LOCATION_WITH_MAX_POINTS_SELECTED = "Illegal combination of parameters. " +
-            "Both queryMeasureLocation and maxPoints selected. Cannot query measure location with bucketing turned on.";
+    public static final String COUNT_ONLY_WITH_MAX_POINTS_SELECTED
+            = "Illegal combination of parameters. Both count only and maxPoints selected.";
+
+    public static final String QUERY_LOCATION_WITH_MAX_POINTS_SELECTED
+            = "Illegal combination of parameters. Both queryMeasureLocation and maxPoints selected. "
+             + "Cannot query measure location with bucketing turned on.";
 
     public static final String DATA_TYPE_NOT_SUPPORTED_FOR_BUCKETING = "Bucketing supported only for number components";
 
@@ -35,10 +38,10 @@ public class ErrorMsg {
 
     public static final String NO_START_OR_END_TIMESTAMP = "startTimestamp and endTimestamp numeric fields are required";
 
-    public static final String ZERO_COMPONENT_ROW_LIMIT = "componentRowLimit is lower than the required minimum " +
-            "(minimum: 1, found: 0)";
+    public static final String ZERO_COMPONENT_ROW_LIMIT = "componentRowLimit is lower than the required minimum "
+             + "(minimum: 1, found: 0)";
 
     private ErrorMsg() {
-        
+
     }
 }

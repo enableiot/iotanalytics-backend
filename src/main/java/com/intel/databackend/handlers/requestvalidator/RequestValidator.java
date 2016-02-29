@@ -16,7 +16,7 @@
 
 package com.intel.databackend.handlers.requestvalidator;
 
-import com.intel.databackend.exceptions.*;
+import com.intel.databackend.exceptions.IllegalDataInquiryArgumentException;
 
 
 public interface RequestValidator {

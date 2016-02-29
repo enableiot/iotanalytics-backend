@@ -25,4 +25,9 @@ public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
+
+    @Override
+    public String toString() {
+        return "AA-Backend application";
+    }
 }

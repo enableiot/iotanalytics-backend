@@ -24,14 +24,22 @@ import java.util.List;
 import java.util.Map;
 
 
-
 @JsonInclude(Include.NON_NULL)
 public class Observation {
 
-    public final static String VALUE = "Value";
-    public final static String TIMESTAMP = "Timestamp";
+    public static final String VALUE = "Value";
+    public static final String TIMESTAMP = "Timestamp";
 
-    public Observation() {}
+    private String aid;
+    private String cid;
+    private Long on;
+    private Long systemOn;
+    private String value;
+    private List<Double> loc;
+    private Map<String, String> attributes;
+
+    public Observation() {
+    }
 
     public Observation(String aid, String cid, long on, String value) {
         this.aid = aid;
@@ -54,14 +62,6 @@ public class Observation {
         this(aid, cid, on, value, loc);
         this.attributes = attributes;
     }
-
-    private String aid;
-    private String cid;
-    private Long on;
-    private Long systemOn;
-    private String value;
-    private List<Double> loc;
-    private Map<String, String> attributes;
 
     public String getAid() {
         return aid;
@@ -112,7 +112,7 @@ public class Observation {
     }
 
     public String toString() {
-    return JsonWriter.objectToJson(this);
+        return JsonWriter.objectToJson(this);
     }
 
     public Long getSystemOn() {

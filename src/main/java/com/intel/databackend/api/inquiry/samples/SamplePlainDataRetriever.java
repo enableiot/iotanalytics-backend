@@ -32,11 +32,11 @@ public class SamplePlainDataRetriever implements SampleDataRetriever {
 
     @Override
     public List<List<String>> get(Observation[] observations, Long first, Long last) {
-        ArrayList<List<String>> sampleObservationList = new ArrayList<List<String>>();
+        List<List<String>> sampleObservationList = new ArrayList<>();
         int maxCoordinatesCount = Common.getMaxCoordinatesCount(observations);
         for (Long i = first; i < last; i++) {
             Observation observation = observations[i.intValue()];
-            List<String> samples = new ArrayList<String>();
+            List<String> samples = new ArrayList<>();
             samples.add(observation.getOn().toString());
             samples.add(observation.getValue());
             sampleObservationList.add(samples);

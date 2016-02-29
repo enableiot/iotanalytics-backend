@@ -38,14 +38,14 @@ public class FirstLastTimestampTest {
     private String accountId;
 
     @Before
-    public void SetUp(){
+    public void SetUp() {
         dataDaoMock = Mockito.mock(DataDao.class);
-        firstLastTimestamp =  new FirstLastTimestampService(dataDaoMock);
+        firstLastTimestamp = new FirstLastTimestampService(dataDaoMock);
         accountId = "acc1";
     }
 
     @Test
-    public void Invoke_EmptyComponentsListInDb_ReturnsOkResponseWithEmptyList() throws Exception{
+    public void Invoke_EmptyComponentsListInDb_ReturnsOkResponseWithEmptyList() throws Exception {
         //ARRANGE
         List<String> emptyList = new ArrayList<>();
 
@@ -65,7 +65,7 @@ public class FirstLastTimestampTest {
     }
 
     @Test
-    public void Invoke_EmptyComponentsListInRequest_ReturnsOkResponseWithEmptyList() throws Exception{
+    public void Invoke_EmptyComponentsListInRequest_ReturnsOkResponseWithEmptyList() throws Exception {
         //ARRANGE
         List<String> componentsList = new ArrayList<>();
         componentsList.add("test");
@@ -85,7 +85,7 @@ public class FirstLastTimestampTest {
     }
 
     @Test
-    public void Invoke_EmptyObservation_ReturnsOkResponseWithEmptyList() throws Exception{
+    public void Invoke_EmptyObservation_ReturnsOkResponseWithEmptyList() throws Exception {
         //ARRANGE
         List<String> componentsList = new ArrayList<>();
         componentsList.add("test");
@@ -107,15 +107,15 @@ public class FirstLastTimestampTest {
     }
 
     @Test
-    public void Invoke_Observations_ReturnsOkResponseWithEmptyList() throws Exception{
+    public void Invoke_Observations_ReturnsOkResponseWithEmptyList() throws Exception {
         //ARRANGE
         List<String> componentsList = new ArrayList<>();
         componentsList.add("test");
 
-        Observation[] observations = new Observation[]{new Observation("aid","cid",1,"val")};
+        Observation[] observations = new Observation[]{new Observation("aid", "cid", 1, "val")};
 
         Mockito.when(dataDaoMock.scan(accountId, "test", 0L, Long.MAX_VALUE, false, null, true, 1)).thenReturn(observations);
-        Mockito.when(dataDaoMock.scan(accountId, "test", 0L, Long.MAX_VALUE, false, null, false ,1)).thenReturn(observations);
+        Mockito.when(dataDaoMock.scan(accountId, "test", 0L, Long.MAX_VALUE, false, null, false, 1)).thenReturn(observations);
 
         FirstLastTimestampRequest request = new FirstLastTimestampRequest();
         request.setComponents(new ArrayList<String>());

@@ -30,7 +30,7 @@ public class BucketDataTypeValidator implements ComponentsDataTypeValidator {
 
     public boolean isValid(String componentId) {
         ComponentDataType componentDataType = componentsMetadata.get(componentId);
-        return (componentDataType != null && componentDataType.getDataType() != null
-                && componentDataType.isNumericType());
+        return componentDataType != null && componentDataType.getDataType() != null
+                && componentDataType.isNumericType();
     }
 }

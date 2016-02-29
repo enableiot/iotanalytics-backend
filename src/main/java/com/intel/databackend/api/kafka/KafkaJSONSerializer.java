@@ -31,7 +31,7 @@ public class KafkaJSONSerializer implements Serializer<Observation> {
     private static final Logger logger = LoggerFactory.getLogger(KafkaJSONSerializer.class);
     private final ObjectWriter jsonWriter;
 
-    public KafkaJSONSerializer(){
+    public KafkaJSONSerializer() {
         jsonWriter = new ObjectMapper().writer();
     }
 

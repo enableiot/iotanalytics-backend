@@ -58,23 +58,24 @@ public class DataRequestValidator implements RequestValidator {
     }
 
     private boolean hasCountOnlyWithMaxPoints() {
-        return (dataInquiryRequest.getCountOnly() != null && dataInquiryRequest.getCountOnly() && dataInquiryRequest.getMaxPoints() != null);
+        return dataInquiryRequest.getCountOnly() != null
+                && dataInquiryRequest.getCountOnly() && dataInquiryRequest.getMaxPoints() != null;
     }
 
-    private boolean hasEmptyComponentsWithDataType()  {
-        return (dataInquiryRequest.getComponentsWithDataType() == null);
+    private boolean hasEmptyComponentsWithDataType() {
+        return dataInquiryRequest.getComponentsWithDataType() == null;
     }
 
     private boolean hasNotStartOrEndDate() {
-        return (dataInquiryRequest.getStartDate() == null || dataInquiryRequest.getEndDate() == null);
+        return dataInquiryRequest.getStartDate() == null || dataInquiryRequest.getEndDate() == null;
     }
 
     private boolean hasQueryLocation() {
-        return (dataInquiryRequest.getQueryMeasureLocation() != null && dataInquiryRequest.getQueryMeasureLocation() == true);
+        return dataInquiryRequest.getQueryMeasureLocation() != null && dataInquiryRequest.getQueryMeasureLocation();
     }
 
     private boolean isMaxPointsRequest() {
-        return (dataInquiryRequest.getMaxPoints() != null && dataInquiryRequest.getMaxPoints() > 0);
+        return dataInquiryRequest.getMaxPoints() != null && dataInquiryRequest.getMaxPoints() > 0;
     }
 
 

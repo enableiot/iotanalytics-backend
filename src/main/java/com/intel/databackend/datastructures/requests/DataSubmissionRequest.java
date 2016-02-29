@@ -16,12 +16,11 @@
 
 package com.intel.databackend.datastructures.requests;
 
-import com.cedarsoftware.util.io.*;
+import com.cedarsoftware.util.io.JsonWriter;
 import com.intel.databackend.datastructures.Observation;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
-
 
 
 public class DataSubmissionRequest {
@@ -33,7 +32,7 @@ public class DataSubmissionRequest {
     private Long systemOn;
 
     @NotNull
-    private List<Observation> data =  null;
+    private List<Observation> data;
 
     public String getAccountId() {
         return accountId;
@@ -84,7 +83,7 @@ public class DataSubmissionRequest {
     }
 
     public String toString() {
-      return JsonWriter.objectToJson(this);
+        return JsonWriter.objectToJson(this);
     }
 
 }

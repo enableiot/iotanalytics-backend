@@ -68,7 +68,7 @@ class TableManager {
     }
 
     private void setTTLforAllTables(HTableDescriptor table) throws IOException {
-        for(HColumnDescriptor family: table.getColumnFamilies()) {
+        for (HColumnDescriptor family : table.getColumnFamilies()) {
             family.setTimeToLive(ONE_YEAR_IN_SECONDS);
             admin.modifyTable(tableName, table);
             logger.info("Setting TTL for column family: {}", family.getNameAsString());

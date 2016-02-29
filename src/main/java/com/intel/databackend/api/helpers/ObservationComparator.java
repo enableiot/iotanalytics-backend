@@ -30,8 +30,8 @@ public class ObservationComparator implements Comparator<Observation> {
     private final List<Map<String, String>> sort;
     private final ComponentDataType componentDataType;
 
-    private final static String ASC = "Asc";
-    private final static String DESC = "Desc";
+    private static final String ASC = "Asc";
+    private static final String DESC = "Desc";
 
     public ObservationComparator(List<Map<String, String>> sort, ComponentDataType componentDataType) {
         this.sort = sort;
@@ -52,6 +52,8 @@ public class ObservationComparator implements Comparator<Observation> {
                             case DESC:
                                 compareToBuilder.append(obs2.getOn(), obs1.getOn());
                                 break;
+                            default:
+                                throw new IllegalArgumentException(getUnrecognizedCriteriaErrorMsg(key));
                         }
                         break;
                     case Observation.VALUE:
@@ -62,8 +64,12 @@ public class ObservationComparator implements Comparator<Observation> {
                             case DESC:
                                 setSortOrder(obs2, obs1, compareToBuilder, componentDataType);
                                 break;
+                            default:
+                                throw new IllegalArgumentException(getUnrecognizedCriteriaErrorMsg(key));
                         }
                         break;
+                    default:
+                        throw new IllegalArgumentException(getUnrecognizedCriteriaErrorMsg(key));
                 }
 
             }
@@ -72,7 +78,12 @@ public class ObservationComparator implements Comparator<Observation> {
         return compareToBuilder.toComparison();
     }
 
-    private void setSortOrder(Observation obs1, Observation obs2, CompareToBuilder compareToBuilder, ComponentDataType componentDataType) {
+    private static String getUnrecognizedCriteriaErrorMsg(String key) {
+        return "Unrecognized sort criteria key" + key;
+    }
+
+    private void setSortOrder(Observation obs1, Observation obs2, CompareToBuilder compareToBuilder,
+                              ComponentDataType componentDataType) {
         try {
             if (componentDataType.isNumericType()) {
                 compareToBuilder.append(Double.parseDouble(obs1.getValue()), Double.parseDouble(obs2.getValue()));

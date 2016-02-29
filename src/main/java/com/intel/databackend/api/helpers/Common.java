@@ -26,37 +26,35 @@ public final class Common {
 
     private static final Logger logger = LoggerFactory.getLogger(Common.class);
 
-    private Common(){
+    private Common() {
     }
 
     public static void addObservationLocation(Observation observation, List<String> samples, int maxCoordinatesCount) {
-        try {
-            Double coordinate = null;
-            for (int i = 0; i < maxCoordinatesCount; i++) {
-                if (observation.getLoc().size() > i) {
-                    coordinate = observation.getLoc().get(i);
-                    if (coordinate != null) {
-                        samples.add(coordinate.toString());
-                    } else {
-                        samples.add("");
-                    }
+        if (observation.getLoc() == null) {
+            logger.warn("Parsing GPS failed - no location info provided");
+            return;
+        }
+        for (int i = 0; i < maxCoordinatesCount; i++) {
+            if (observation.getLoc().size() > i) {
+                Double coordinate = observation.getLoc().get(i);
+                if (coordinate != null) {
+                    samples.add(coordinate.toString());
                 } else {
                     samples.add("");
                 }
+            } else {
+                samples.add("");
             }
-        } catch (Exception e) {
-            logger.warn("Parsing GPS failed");
         }
     }
 
     public static int getMaxCoordinatesCount(Observation[] observations) {
         int maxCoordinatesCount = 0;
-        for(Observation observation : observations) {
+        for (Observation observation : observations) {
             List<Double> loc = observation.getLoc();
-            if (loc != null) {
-                if (loc.size() > maxCoordinatesCount) {
-                    maxCoordinatesCount = loc.size();
-                }
+
+            if (loc != null && loc.size() > maxCoordinatesCount) {
+                maxCoordinatesCount = loc.size();
             }
         }
         return maxCoordinatesCount;

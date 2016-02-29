@@ -23,9 +23,15 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
+
+
 public class AggregationCalculator {
 
     private static final Logger logger = LoggerFactory.getLogger(AggregationCalculator.class);
+
+    enum AggregationModes {
+        only, include
+    }
 
     private final String componentId;
 
@@ -33,59 +39,63 @@ public class AggregationCalculator {
 
     private final Observation[] observations;
 
-    public AggregationCalculator(String componentId, Observation[] observations, Map<String, ComponentDataType> componentsMetadata) {
+    public AggregationCalculator(String componentId, Observation[] observations,
+                                 Map<String, ComponentDataType> componentsMetadata) {
         this.componentId = componentId;
         this.observations = observations;
         this.componentsMetadata = componentsMetadata;
     }
 
     public static boolean returnsAggregationOnly(String aggregationMode) {
-        return aggregationMode != null && aggregationMode.equals("only");
+        return aggregationMode != null && aggregationMode.equals(AggregationModes.only.toString());
     }
 
     public static boolean includeAggregation(String aggregationMode) {
-        return aggregationMode != null && (aggregationMode.equals("only") || aggregationMode.equals("include"));
+        return aggregationMode != null && (aggregationMode.equals(AggregationModes.only.toString())
+                || aggregationMode.equals(AggregationModes.include.toString()));
     }
 
     public AggregationResult generateAggregations(Long first, Long last) {
         logger.debug("Generating aggregations for componentId - {} . From - {}, to - {}", componentId, first, last);
 
-        AggregationResult aggregationResult = new AggregationResult(componentId);
+        AggregationResult aggregationResult = new AggregationResult();
         aggregationResult.setCount(last - first);
-        if (aggregationResult.getCount() > 0) {
-            if (componentsMetadata.containsKey(componentId)) {
-                ComponentDataType componentDataType = componentsMetadata.get(componentId);
-                if (componentDataType.isNumericType()) {
-                    double min = Double.MAX_VALUE;
-                    double max = Double.MIN_VALUE;
-                    double sum = 0.0;
-                    double sumOfSquares = 0.0;
-                    for (Long l = first; l < last; l++) {
-                        Observation observation = observations[l.intValue()];
-                        try {
-                            Double value = Double.parseDouble(observation.getValue());
-                            if (value < min) {
-                                min = value;
-                            }
-                            if (value > max) {
-                                max = value;
-                            }
-                            sum += value;
-                            sumOfSquares += value * value;
-                        } catch (NumberFormatException ex) {
-                            logger.warn("Observation value - {} is not a double.", observation.getValue());
-                        }
-                    }
-                    aggregationResult.setMin(min);
-                    aggregationResult.setMax(max);
-                    aggregationResult.setSum(sum);
-                    aggregationResult.setSumOfSquares(sumOfSquares);
-                }
-            } else {
-                logger.warn("ComponentType not found for componentId - {}.", componentId);
-            }
-        } else {
+        if (aggregationResult.getCount() <= 0) {
             logger.warn("No aggregation generated for componentId - {}.", componentId);
+            return aggregationResult;
+        }
+
+        if (!componentsMetadata.containsKey(componentId)) {
+            logger.warn("ComponentType not found for componentId - {}.", componentId);
+            return aggregationResult;
+        }
+
+        ComponentDataType componentDataType = componentsMetadata.get(componentId);
+        if (componentDataType.isNumericType()) {
+            double min = Double.MAX_VALUE;
+            double max = Double.MIN_VALUE;
+            double sum = 0.0;
+            double sumOfSquares = 0.0;
+            for (Long l = first; l < last; l++) {
+                Observation observation = observations[l.intValue()];
+                try {
+                    Double value = Double.parseDouble(observation.getValue());
+                    if (value < min) {
+                        min = value;
+                    }
+                    if (value > max) {
+                        max = value;
+                    }
+                    sum += value;
+                    sumOfSquares += value * value;
+                } catch (NumberFormatException ex) {
+                    logger.warn("Observation value - {} is not a double.", observation.getValue());
+                }
+            }
+            aggregationResult.setMin(min);
+            aggregationResult.setMax(max);
+            aggregationResult.setSum(sum);
+            aggregationResult.setSumOfSquares(sumOfSquares);
         }
 
         return aggregationResult;

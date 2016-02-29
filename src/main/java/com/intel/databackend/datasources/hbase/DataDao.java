@@ -28,7 +28,8 @@ public interface DataDao {
 
     Observation[] scan(String accountId, String componentId, long start, long stop, Boolean gps, String[] attributes);
 
-    Observation[] scan(String accountId, String componentId, long start, long stop, Boolean gps, String[] attributes, boolean forward, int limit);
+    Observation[] scan(String accountId, String componentId, long start, long stop, Boolean gps, String[] attributes,
+                       boolean forward, int limit);
 
     String[] scanForAttributeNames(String accountId, String componentId, long start, long stop) throws IOException;
 }

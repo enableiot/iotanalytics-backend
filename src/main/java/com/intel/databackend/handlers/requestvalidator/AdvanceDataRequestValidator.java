@@ -17,7 +17,8 @@
 package com.intel.databackend.handlers.requestvalidator;
 
 import com.intel.databackend.datastructures.requests.AdvDataInquiryRequest;
-import com.intel.databackend.exceptions.*;
+import com.intel.databackend.exceptions.ErrorMsg;
+import com.intel.databackend.exceptions.IllegalDataInquiryArgumentException;
 import org.apache.commons.collections.CollectionUtils;
 
 
@@ -46,14 +47,15 @@ public class AdvanceDataRequestValidator implements RequestValidator {
     }
 
     private boolean hasZeroComponentRowLimit() {
-        return (advDataInquiryRequest.getComponentRowLimit() != null && advDataInquiryRequest.getComponentRowLimit() <= 0);
+        return advDataInquiryRequest.getComponentRowLimit() != null
+                && advDataInquiryRequest.getComponentRowLimit() <= 0;
     }
 
     private boolean hasStartOrEndTimestamp() {
-        return (advDataInquiryRequest.getStartTimestamp() != null && advDataInquiryRequest.getEndTimestamp() != null);
+        return advDataInquiryRequest.getStartTimestamp() != null && advDataInquiryRequest.getEndTimestamp() != null;
     }
 
-    private boolean hasEmptyDeviceDataList()  {
-        return (CollectionUtils.isEmpty(advDataInquiryRequest.getDeviceDataList()));
+    private boolean hasEmptyDeviceDataList() {
+        return CollectionUtils.isEmpty(advDataInquiryRequest.getDeviceDataList());
     }
 }

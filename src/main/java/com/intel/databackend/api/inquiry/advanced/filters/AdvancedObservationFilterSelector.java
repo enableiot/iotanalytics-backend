@@ -35,10 +35,10 @@ public class AdvancedObservationFilterSelector implements ObservationFilterSelec
     @Override
     public Observation[] filter(Observation[] obs, ComponentDataType componentDataType) {
         if (dataInquiryRequest.getValueFilter() != null && dataInquiryRequest.getValueFilter().containsKey("value")) {
-            obs = observationFilters.filterByValue(obs, dataInquiryRequest.getValueFilter(), componentDataType);
+            return observationFilters.filterByValue(obs, dataInquiryRequest.getValueFilter(), componentDataType);
         }
         if (dataInquiryRequest.getMeasurementAttributeFilter() != null) {
-            obs = observationFilters.filterByMeasurementAttrs(obs, dataInquiryRequest.getMeasurementAttributeFilter());
+            return observationFilters.filterByMeasurementAttrs(obs, dataInquiryRequest.getMeasurementAttributeFilter());
         }
         return obs;
     }

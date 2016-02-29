@@ -22,7 +22,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
 
 
-
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Component {
 
@@ -55,6 +54,6 @@ public class Component {
     }
 
     public String toString() {
-    return JsonWriter.objectToJson(this);
-  }
+        return JsonWriter.objectToJson(this);
+    }
 }

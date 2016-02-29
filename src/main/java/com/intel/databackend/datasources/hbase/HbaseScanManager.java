@@ -31,7 +31,7 @@ class HbaseScanManager {
     private final String accountId;
     private final String componentId;
 
-    private static long MAX_DATA_PER_SCAN = 1000;
+    private static final long MAX_DATA_PER_SCAN = 1000;
     private final PageFilter defaultPageFilter;
 
     public HbaseScanManager(String accountId, String componentId) {
@@ -41,13 +41,21 @@ class HbaseScanManager {
     }
 
     public HbaseScanManager create(long start, long stop) {
-        stop = DataFormatter.fixStopForExclusiveScan(start, stop);
+        long fixedStop = DataFormatter.fixStopForExclusiveScan(start, stop);
         scan = new Scan(
-                Bytes.toBytes(accountId + '\0' + componentId + '\0' + DataFormatter.zeroPrefixedTimestamp(start)),
-                Bytes.toBytes(accountId + '\0' + componentId + '\0' + DataFormatter.zeroPrefixedTimestamp(stop))
+                createRow(start),
+                createRow(fixedStop)
         );
+
         scan.setFilter(defaultPageFilter);
         return this;
+    }
+
+    public byte[] createRow(long timestamp) {
+        StringBuilder sb = new StringBuilder(accountId).append('\0')
+                .append(componentId).append('\0')
+                .append(DataFormatter.zeroPrefixedTimestamp(timestamp));
+        return Bytes.toBytes(sb.toString());
     }
 
     public HbaseScanManager askForData(Boolean gps, String[] attributes) {
@@ -57,11 +65,11 @@ class HbaseScanManager {
     }
 
     public HbaseScanManager setFilter(Filter filter) {
-        if (filter instanceof PageFilter) {
-            if (isPageLimitExceeded((PageFilter) filter)) {
-                throw new IllegalArgumentException("m");
-            }
+        if (filter instanceof PageFilter && isPageLimitExceeded((PageFilter) filter)) {
+            throw new IllegalArgumentException("Page size limit it to big, should be smaller than: "
+                    + MAX_DATA_PER_SCAN);
         }
+
         scan.setFilter(filter);
         return this;
     }
@@ -81,10 +89,7 @@ class HbaseScanManager {
     }
 
     private boolean isPageLimitExceeded(PageFilter filter) {
-        if (filter.getPageSize() > MAX_DATA_PER_SCAN) {
-            return true;
-        }
-        return false;
+        return filter.getPageSize() > MAX_DATA_PER_SCAN;
     }
 
     private void askForAdditionalInformation(Boolean gps, String[] attributes) {

@@ -31,7 +31,7 @@ public class AdvDataInquiryRequest {
     private Long startTimestamp;
     private Long endTimestamp;
 
-    List<DeviceData> deviceDataList;
+    private List<DeviceData> deviceDataList;
 
     private List<String> returnedMeasureAttributes;
     private Boolean showMeasureLocation;
@@ -42,7 +42,7 @@ public class AdvDataInquiryRequest {
     private Long componentRowStart;
     private Long componentRowLimit;
 
-    public List<Map<String, String>> sort;
+    private List<Map<String, String>> sort;
 
     public Long getStartTimestamp() {
         return startTimestamp;
@@ -133,7 +133,7 @@ public class AdvDataInquiryRequest {
     }
 
     public String toString() {
-    	return JsonWriter.objectToJson(this);
+        return JsonWriter.objectToJson(this);
     }
 
     public String[] getRequestedAttributes() {
@@ -148,11 +148,11 @@ public class AdvDataInquiryRequest {
     }
 
     public boolean isCountOnly() {
-        return countOnly != null && countOnly == true;
+        return countOnly != null && countOnly;
     }
 
     public boolean hasRequestMeasuredAttributes() {
-        return getReturnedMeasureAttributes() != null && getReturnedMeasureAttributes().size() > 0;
+        return getReturnedMeasureAttributes() != null && !getReturnedMeasureAttributes().isEmpty();
     }
 
     public String getMsgType() {

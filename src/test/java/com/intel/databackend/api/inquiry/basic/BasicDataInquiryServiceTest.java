@@ -41,32 +41,33 @@ public class BasicDataInquiryServiceTest {
     private Observation firstObservation, secondObservation;
 
     @Before
-    public void SetUp(){
+    public void SetUp() {
         dataDaoMock = Mockito.mock(DataDao.class);
-        basicDataInquiryService =  new BasicDataInquiryService(dataDaoMock);
+        basicDataInquiryService = new BasicDataInquiryService(dataDaoMock);
         accountId = "acc1";
         componentId = "comp1";
         request = new DataInquiryRequest();
     }
 
-    private void MockTwoObservations() throws Exception{
+    private void MockTwoObservations() throws Exception {
         Observation[] observations = new Observation[2];
-        observations[0] = new Observation("1",componentId,2L,"4");
-        observations[1] = new Observation("2",componentId,4L,"6");
+        observations[0] = new Observation("1", componentId, 2L, "4");
+        observations[1] = new Observation("2", componentId, 4L, "6");
         firstObservation = observations[0];
         secondObservation = observations[1];
         Mockito.when(dataDaoMock.scan(accountId, componentId, request.getStartDate(), request.getEndDate(), false, null)).thenReturn(observations);
     }
 
-    private String getFirstObservationValue(DataInquiryResponse response){
+    private String getFirstObservationValue(DataInquiryResponse response) {
         return response.getComponents().get(0).getSamples().get(0).get(1);
     }
-    private String getFirstObservationOn(DataInquiryResponse response){
+
+    private String getFirstObservationOn(DataInquiryResponse response) {
         return response.getComponents().get(0).getSamples().get(0).get(0);
     }
 
     @Test
-    public void Invoke_RequestCountOnlyZeroComponents_ReturnsEmptyOkResponse() throws Exception{
+    public void Invoke_RequestCountOnlyZeroComponents_ReturnsEmptyOkResponse() throws Exception {
         //ARRANGE
         request.setStartDate(1L);
         request.setEndDate(1L);
@@ -84,7 +85,7 @@ public class BasicDataInquiryServiceTest {
     }
 
     @Test
-    public void Invoke_RequestCountOnlyTwoObservations_ReturnsTwoRowCountOkResponse() throws Exception{
+    public void Invoke_RequestCountOnlyTwoObservations_ReturnsTwoRowCountOkResponse() throws Exception {
         //ARRANGE
         request.setStartDate(1L);
         request.setEndDate(1L);
@@ -100,12 +101,12 @@ public class BasicDataInquiryServiceTest {
         //ACT
         DataInquiryResponse response = basicDataInquiryService.invoke();
         //ASSERT
-        assertEquals((Long)2L, response.getRowCount());
+        assertEquals((Long) 2L, response.getRowCount());
         assertEquals(null, response.getMaxPoints());
     }
 
     @Test
-    public void Invoke_RequestCountOnlyFalseTwoObservations_ReturnsFullResponseOkResponse() throws Exception{
+    public void Invoke_RequestCountOnlyFalseTwoObservations_ReturnsFullResponseOkResponse() throws Exception {
         //ARRANGE
         request.setStartDate(1L);
         request.setEndDate(1L);
@@ -120,7 +121,7 @@ public class BasicDataInquiryServiceTest {
         DataInquiryResponse response = basicDataInquiryService.invoke();
 
         //ASSERT
-        assertEquals((Long)2L, response.getRowCount());
+        assertEquals((Long) 2L, response.getRowCount());
         assertEquals(accountId, response.getAccountId());
         assertEquals(componentId, response.getComponents().get(0).getComponentId());
         assertEquals(firstObservation.getOn().toString(), getFirstObservationOn(response));
@@ -129,7 +130,7 @@ public class BasicDataInquiryServiceTest {
     }
 
     @Test(expected = DataInquiryException.class)
-    public void Invoke_NullComponentTypeFromMetadata_ThrowsDataInquiryException() throws Exception{
+    public void Invoke_NullComponentTypeFromMetadata_ThrowsDataInquiryException() throws Exception {
         //ARRANGE
         request.setStartDate(1L);
         request.setEndDate(1L);
@@ -148,7 +149,7 @@ public class BasicDataInquiryServiceTest {
     }
 
     @Test(expected = DataInquiryException.class)
-    public void Invoke_ComponentTypeNotNumberFromMetadata_ThrowsDataInquiryException() throws Exception{
+    public void Invoke_ComponentTypeNotNumberFromMetadata_ThrowsDataInquiryException() throws Exception {
         //ARRANGE
         request.setStartDate(1L);
         request.setEndDate(1L);
@@ -169,7 +170,7 @@ public class BasicDataInquiryServiceTest {
     }
 
     @Test
-    public void Invoke_ComponentTypeNumberFromMetadata_ReturnAverageOf10Is5() throws Exception{
+    public void Invoke_ComponentTypeNumberFromMetadata_ReturnAverageOf10Is5() throws Exception {
         //ARRANGE
         request.setStartDate(1L);
         request.setEndDate(5L);
@@ -188,12 +189,12 @@ public class BasicDataInquiryServiceTest {
         DataInquiryResponse response = basicDataInquiryService.invoke();
 
         //ASSERT
-        assertEquals((Long)2L, response.getRowCount());
+        assertEquals((Long) 2L, response.getRowCount());
         assertEquals(accountId, response.getAccountId());
         assertEquals(componentId, response.getComponents().get(0).getComponentId());
 
         String expectedTimeAvg = String.valueOf((firstObservation.getOn() + secondObservation.getOn()) / 2);
-        String expectedValueAvg = String.valueOf((Double.parseDouble(firstObservation.getValue()) + Double.parseDouble(secondObservation.getValue())) / 2L  );
+        String expectedValueAvg = String.valueOf((Double.parseDouble(firstObservation.getValue()) + Double.parseDouble(secondObservation.getValue())) / 2L);
         assertEquals(expectedTimeAvg, getFirstObservationOn(response));
         assertEquals(expectedValueAvg, getFirstObservationValue(response));
         assertEquals(null, response.getMaxPoints());

@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
 @JsonInclude(Include.NON_NULL)
 public class AdvDataInquiryResponse {
 

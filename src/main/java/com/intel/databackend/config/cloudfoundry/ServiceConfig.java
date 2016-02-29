@@ -24,6 +24,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import javax.annotation.PostConstruct;
 
 @Service
@@ -51,7 +52,8 @@ public class ServiceConfig implements ServiceConfigProvider {
     private JSONObject zookeeperService;
     private JSONObject zookeeperCredentials;
 
-    public ServiceConfig() {}
+    public ServiceConfig() {
+    }
 
     @PostConstruct
     public void init() {
@@ -72,11 +74,14 @@ public class ServiceConfig implements ServiceConfigProvider {
           This is dirty workaround for dev's local machines
           On local kafka instance we cannot use '/kafka' postfix in URI
          */
-        String plan = getFieldValueFromJson(zookeeperService, ZOOKEEPER_BROKER_NAME, ZOOKEEPER_BROKER_PLAN, String.class);
+        String plan = getFieldValueFromJson(zookeeperService, ZOOKEEPER_BROKER_NAME,
+                ZOOKEEPER_BROKER_PLAN, String.class);
         if (StringUtils.isNotEmpty(plan) && plan.equals(LOCAL_PLAN)) {
-            return getFieldValueFromJson(zookeeperCredentials, ZOOKEEPER_BROKER_NAME, ZOOKEEPER_BROKER_URI, String.class);
+            return getFieldValueFromJson(zookeeperCredentials, ZOOKEEPER_BROKER_NAME,
+                    ZOOKEEPER_BROKER_URI, String.class);
         } else {
-            return getFieldValueFromJson(zookeeperCredentials, ZOOKEEPER_BROKER_NAME, ZOOKEEPER_BROKER_URI, String.class)+"/kafka";
+            return getFieldValueFromJson(zookeeperCredentials, ZOOKEEPER_BROKER_NAME,
+                    ZOOKEEPER_BROKER_URI, String.class) + "/kafka";
         }
     }
 
@@ -106,7 +111,8 @@ public class ServiceConfig implements ServiceConfigProvider {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> T getFieldValueFromJson(JSONObject jsonObj, String type, String field, Class<T> tClass) throws VcapEnvironmentException {
+    private <T> T getFieldValueFromJson(JSONObject jsonObj, String type, String field, Class<T> tClass)
+            throws VcapEnvironmentException {
         if (jsonObj != null) {
             try {
                 if (tClass.equals(String.class)) {

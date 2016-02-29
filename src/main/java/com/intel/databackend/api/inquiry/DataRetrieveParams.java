@@ -34,7 +34,7 @@ public class DataRetrieveParams {
 
     private Map<String, ComponentDataType> componentsMetadata;
 
-    public DataRetrieveParams (DataInquiryRequest dataInquiryRequest, String accountId) {
+    public DataRetrieveParams(DataInquiryRequest dataInquiryRequest, String accountId) {
         this.startDate = dataInquiryRequest.getStartDate();
         this.endDate = dataInquiryRequest.getEndDate();
         this.accountId = accountId;
@@ -44,7 +44,7 @@ public class DataRetrieveParams {
         this.componentsMetadata = dataInquiryRequest.getComponentsWithDataType();
     }
 
-    public DataRetrieveParams (AdvDataInquiryRequest dataInquiryRequest, String accountId) {
+    public DataRetrieveParams(AdvDataInquiryRequest dataInquiryRequest, String accountId) {
         this.startDate = dataInquiryRequest.getStartTimestamp();
         this.endDate = dataInquiryRequest.getEndTimestamp();
         this.accountId = accountId;

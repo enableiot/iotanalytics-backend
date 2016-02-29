@@ -18,7 +18,6 @@ package com.intel.databackend.datastructures.responses;
 
 import com.cedarsoftware.util.io.JsonWriter;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.intel.databackend.datastructures.AdvancedComponent;
 import com.intel.databackend.datastructures.DeviceComponent;
 
 import java.util.List;

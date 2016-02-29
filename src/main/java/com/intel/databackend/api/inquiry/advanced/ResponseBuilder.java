@@ -41,7 +41,7 @@ public class ResponseBuilder {
             setTimestampsInResponse();
             setComponentRowLimitsInResponse();
         }
-        return  dataInquiryResponse;
+        return dataInquiryResponse;
     }
 
     public AdvDataInquiryResponse getDataInquiryResponse() {

@@ -27,21 +27,22 @@ import java.util.stream.Collectors;
 public class HbaseScanManagerTest {
 
     HbaseScanManager hbaseScanManager;
+
     @Before
-    public void SetUp(){
+    public void SetUp() {
         hbaseScanManager = new HbaseScanManager("accountId", "cid");
         hbaseScanManager.create(99L, 100L);
     }
 
     @Test
     public void CheckDefaultFilter() {
-        assert  hbaseScanManager.getScan().getFilter() instanceof PageFilter;
+        assert hbaseScanManager.getScan().getFilter() instanceof PageFilter;
     }
 
     @Test
     public void CheckScansAccessorMethods() {
         hbaseScanManager.setFilter(new ColumnCountGetFilter(2));
-        assert  hbaseScanManager.getScan().getFilter() instanceof ColumnCountGetFilter;
+        assert hbaseScanManager.getScan().getFilter() instanceof ColumnCountGetFilter;
 
         hbaseScanManager.setCaching(5);
         assert hbaseScanManager.getScan().getCaching() == 5;
@@ -54,7 +55,7 @@ public class HbaseScanManagerTest {
     @Test(expected = IllegalArgumentException.class)
     public void Invoke_setFilter__ThrowsException() {
         hbaseScanManager.setFilter(new PageFilter(999L));
-        assert  hbaseScanManager.getScan().getFilter() instanceof PageFilter;
+        assert hbaseScanManager.getScan().getFilter() instanceof PageFilter;
 
         hbaseScanManager.setFilter(new PageFilter(10001L));
     }
@@ -72,8 +73,8 @@ public class HbaseScanManagerTest {
         List<String> result = hbaseScanManager.getScan().getFamilyMap()
                 .get(Columns.BYTES_COLUMN_FAMILY).stream().map(String::new).collect(Collectors.toList());
 
-        assert result.indexOf(Columns.ATTRIBUTE_COLUMN_PREFIX+paramAge) > -1;
-        assert result.indexOf(Columns.ATTRIBUTE_COLUMN_PREFIX+paramCity) > -1;
+        assert result.indexOf(Columns.ATTRIBUTE_COLUMN_PREFIX + paramAge) > -1;
+        assert result.indexOf(Columns.ATTRIBUTE_COLUMN_PREFIX + paramCity) > -1;
     }
 
 }

@@ -21,5 +21,5 @@ import com.intel.databackend.datastructures.Observation;
 
 public interface ObservationFilterSelector {
 
-    public Observation[] filter(Observation[] observations, ComponentDataType componentDataType);
+    Observation[] filter(Observation[] observations, ComponentDataType componentDataType);
 }

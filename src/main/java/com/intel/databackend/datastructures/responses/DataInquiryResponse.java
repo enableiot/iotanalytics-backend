@@ -16,13 +16,12 @@
 
 package com.intel.databackend.datastructures.responses;
 
-import java.util.List;
-
-import com.cedarsoftware.util.io.*;
+import com.cedarsoftware.util.io.JsonWriter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.intel.databackend.datastructures.Component;
 
+import java.util.List;
 
 
 @JsonInclude(Include.NON_NULL)
