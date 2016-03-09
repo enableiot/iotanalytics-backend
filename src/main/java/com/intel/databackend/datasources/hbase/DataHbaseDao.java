@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
-import org.trustedanalytics.hadoop.config.client.helper.Hbase;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -45,13 +44,14 @@ public class DataHbaseDao implements DataDao {
     private static final String DEVICE_MEASUREMENT = "_DEVICE_MEASUREMENT";
 
     private Connection connection;
+    @Autowired
+    private HbaseConnManger hbaseConnManger;
 
     private Connection getHbaseConnection() throws IOException {
         try {
             if (connection == null || connection.isClosed()) {
                 logger.info("Creating connection");
-                closeHbaseConnection();
-                connection = Hbase.newInstance().createConnection();
+                connection = hbaseConnManger.create();
             }
             return connection;
         } catch (LoginException e) {

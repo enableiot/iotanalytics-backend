@@ -16,6 +16,7 @@
 
 package com.intel.databackend.config;
 
+import com.intel.databackend.datasources.hbase.KerberosProperties;
 import com.intel.databackend.exceptions.VcapEnvironmentException;
 
 public interface ServiceConfigProvider {
@@ -33,5 +34,7 @@ public interface ServiceConfigProvider {
     Integer getKafkaReplicationFactor() throws VcapEnvironmentException;
 
     Integer getKafkaTimeoutInMs() throws VcapEnvironmentException;
+
+    KerberosProperties getKerberosCredentials() throws VcapEnvironmentException;
 
 }

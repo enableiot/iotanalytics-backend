@@ -26,16 +26,12 @@ To install AA backend in your Trusted Analytics Platform space, login into TAP a
 1. Create instances with specified name for each of required services from marketplace:
 
     * Hbase broker with name myhbase
-    * Hdfs broker with name myhdfs
     * Kafka broker with name mykafka
     * Zookeeper broker with name myzookeeper
-    
+
 1. Create following user-provided services with properties filled with real values:
-   
-   If you have deployed dashboard already then you should have user and password set previously. This is only reminder
-   that same service need to be attached to backend
-   
-        cf cups installer-backend-user-credentials-ups -p "{\"username\":\"${USER}\",\"password\":\"${PASSWORD}\"}"
+
+        cf cups kafka-ups -p "{\"topic\":\"example_topic_name\",\"enabled\":true,\"partitions\":1,\"replication\":1,\"timeout_ms\":10000}"
         
 1. make build
 1. ./cf-deploy.sh

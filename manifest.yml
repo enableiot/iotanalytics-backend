@@ -7,9 +7,7 @@ applications:
   buildpack: https://github.com/cloudfoundry/java-buildpack.git
   services:
     - kerberos-service
-    - myhdfs
     - myhbase
-    - installer-backend-user-credentials-ups
     - mykafka
     - kafka-ups
     - myzookeeper

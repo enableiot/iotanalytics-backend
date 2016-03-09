@@ -18,6 +18,7 @@ package com.intel.databackend.config.cloudfoundry;
 
 import com.intel.databackend.config.ServiceConfigProvider;
 import com.intel.databackend.config.cloudfoundry.utils.VcapReader;
+import com.intel.databackend.datasources.hbase.KerberosProperties;
 import com.intel.databackend.exceptions.VcapEnvironmentException;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
@@ -43,6 +44,12 @@ public class ServiceConfig implements ServiceConfigProvider {
     public static final String ZOOKEEPER_BROKER_URI = "zk.cluster";
     public static final String ZOOKEEPER_BROKER_PLAN = "plan";
 
+    public static final String KERBEROS_UPS_NAME = "kerberos-service";
+    public static final String KRB_USER = "kuser";
+    public static final String KRB_PASS = "kpassword";
+    public static final String KRB_REALM = "krealm";
+    public static final String KRB_KDC = "kdc";
+
     public static final String LOCAL_PLAN = "local";
 
     @Autowired
@@ -51,6 +58,7 @@ public class ServiceConfig implements ServiceConfigProvider {
     private JSONObject kafkaSettings;
     private JSONObject zookeeperService;
     private JSONObject zookeeperCredentials;
+    private JSONObject kerberosCredentials;
 
     public ServiceConfig() {
     }
@@ -61,6 +69,7 @@ public class ServiceConfig implements ServiceConfigProvider {
         kafkaSettings = vcapReaderServices.getUserProvidedServiceCredentialsByName(KAFKA_UPS_NAME);
         zookeeperService = vcapReaderServices.getVcapServiceByType(ZOOKEEPER_BROKER_NAME);
         zookeeperCredentials = vcapReaderServices.getVcapServiceCredentialsByType(ZOOKEEPER_BROKER_NAME);
+        kerberosCredentials = vcapReaderServices.getUserProvidedServiceCredentialsByName(KERBEROS_UPS_NAME);
     }
 
     @Override
@@ -108,6 +117,19 @@ public class ServiceConfig implements ServiceConfigProvider {
     @Override
     public Integer getKafkaTimeoutInMs() throws VcapEnvironmentException {
         return getFieldValueFromJson(kafkaSettings, KAFKA_UPS_NAME, KAFKA_UPS_TIMEOUT_MS, Integer.class);
+    }
+
+    @Override
+    public KerberosProperties getKerberosCredentials() throws VcapEnvironmentException {
+        KerberosProperties kerberosProperties = null;
+        if (kerberosCredentials != null) {
+            kerberosProperties = new KerberosProperties();
+            kerberosProperties.setKdc(getFieldValueFromJson(kerberosCredentials, KERBEROS_UPS_NAME, KRB_KDC, String.class));
+            kerberosProperties.setPassword(getFieldValueFromJson(kerberosCredentials, KERBEROS_UPS_NAME, KRB_PASS, String.class));
+            kerberosProperties.setUser(getFieldValueFromJson(kerberosCredentials, KERBEROS_UPS_NAME, KRB_USER, String.class));
+            kerberosProperties.setRealm(getFieldValueFromJson(kerberosCredentials, KERBEROS_UPS_NAME, KRB_REALM, String.class));
+        }
+        return kerberosProperties;
     }
 
     @SuppressWarnings("unchecked")

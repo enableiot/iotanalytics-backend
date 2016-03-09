@@ -113,7 +113,7 @@ dependencies {
     compile "org.hamcrest:hamcrest-all:1.3"
     compile "com.btmatthews.hamcrest:hamcrest-matchers:1.0.1"
 
-    compile("org.trustedanalytics:hadoop-utils:0.5.0")
+    compile("org.trustedanalytics:hadoop-utils:0.5.12")
 
     /*
      To find proper version of Kafka for Cloudera please use following link:
@@ -126,9 +126,10 @@ dependencies {
      /* check the required version in kafka_2.10:0.8.2.0-kafka-1.4.0 pom.xml*/
     compile("com.101tec:zkclient:0.3")
     
-    testCompile group: 'junit', name: 'junit', version: '4.+'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile 'org.testng:testng:6.8.21'
     testCompile "org.powermock:powermock-api-mockito:1.6.2"
+    testCompile "org.powermock:powermock-module-junit4:1.6.2"
     testCompile "org.powermock:powermock-module-testng:1.6.2"
     testCompile "org.springframework:spring-test:4.1.6.RELEASE"
     testCompile "org.hamcrest:hamcrest-all:1.3"
