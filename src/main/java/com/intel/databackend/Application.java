@@ -28,6 +28,6 @@ public class Application {
 
     @Override
     public String toString() {
-        return "AA-Backend application";
+        return "Backend application";
     }
 }

@@ -158,7 +158,7 @@ public class Data {
     public String version() throws JSONException {
         JSONObject appVersion = new JSONObject();
         appVersion.put("version", System.getenv("VERSION"));
-        appVersion.put("name", "installer-backend");
+        appVersion.put("name", "backend");
         return appVersion.toString();
     }
 }
