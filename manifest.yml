@@ -1,6 +1,6 @@
 ---
 applications:
-- name: installer-backend
+- name: backend
   memory: 1024M
   instances: 1
   path: build/libs/databackend.jar

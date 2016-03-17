@@ -21,18 +21,18 @@ You can find dashboard API documentation for Data API on pages:
 
 #### On Trusted Analytics Platform (https://github.com/trustedanalytics)
 
-To install AA backend in your Trusted Analytics Platform space, login into TAP and execute:
+To install backend in your Trusted Analytics Platform space, login into TAP and execute:
 
 1. Create instances with specified name for each of required services from marketplace:
 
     * Hbase broker with name myhbase
     * Kafka broker with name mykafka
     * Zookeeper broker with name myzookeeper
-
+    
 1. Create following user-provided services with properties filled with real values:
 
         cf cups kafka-ups -p "{\"topic\":\"example_topic_name\",\"enabled\":true,\"partitions\":1,\"replication\":1,\"timeout_ms\":10000}"
+        cf cups kerberos-service -p '{"kdc":"${KERBEROS_KDC}","kpassword":"${KERBEROS_USER_PASSWORD}","krealm":"${KERBEROS_REALM}","kuser":"${KERBEROS_USER_NAME}"}'
         
-1. make build
 1. ./cf-deploy.sh
 1. Check logs and wait for application start.
