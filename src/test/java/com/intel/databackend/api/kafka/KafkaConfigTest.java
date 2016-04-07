@@ -30,6 +30,8 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import java.util.List;
+
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(KafkaConfig.class)
 public class KafkaConfigTest {
@@ -38,7 +40,7 @@ public class KafkaConfigTest {
     private ServiceConfigProvider serviceConfigProvider;
 
     @Mock
-    private KafkaProducer<String, Observation> kafkaProducer;
+    private KafkaProducer<String, List<Observation>> kafkaProducer;
 
     @InjectMocks
     private KafkaConfig kafkaConfig;
@@ -55,14 +57,14 @@ public class KafkaConfigTest {
         Mockito.when(serviceConfigProvider.getKafkaUri()).thenReturn("localhost");
         PowerMockito.whenNew(KafkaProducer.class).withAnyArguments().thenReturn(kafkaProducer);
 
-        KafkaProducer<String, Observation> kf = kafkaConfig.kafkaProducer();
+        KafkaProducer<String, List<Observation>> kf = kafkaConfig.kafkaProducer();
         assert kf == kafkaProducer;
     }
 
     @Test
     public void testKafkaProducer_isDisabled() throws Exception {
         Mockito.when(serviceConfigProvider.isKafkaEnabled()).thenReturn(false);
-        KafkaProducer<String, Observation> kf = kafkaConfig.kafkaProducer();
+        KafkaProducer<String, List<Observation>> kf = kafkaConfig.kafkaProducer();
         assert kf == null;
     }
 }

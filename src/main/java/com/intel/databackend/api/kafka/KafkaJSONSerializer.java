@@ -23,10 +23,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 
-public class KafkaJSONSerializer implements Serializer<Observation> {
+public class KafkaJSONSerializer implements Serializer<List<Observation>> {
 
     private static final Logger logger = LoggerFactory.getLogger(KafkaJSONSerializer.class);
     private final ObjectWriter jsonWriter;
@@ -41,7 +42,7 @@ public class KafkaJSONSerializer implements Serializer<Observation> {
     }
 
     @Override
-    public byte[] serialize(String topic, Observation data) {
+    public byte[] serialize(String topic, List<Observation> data) {
         try {
             return jsonWriter.writeValueAsString(data).getBytes();
         } catch (IOException e) {

@@ -29,6 +29,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -42,10 +43,10 @@ public class KafkaConfig {
 
     private final Serializer<String> keySerializer = new StringSerializer();
 
-    private final Serializer<Observation> valueSerializer = new KafkaJSONSerializer();
+    private final Serializer<List<Observation>> valueSerializer = new KafkaJSONSerializer();
 
     @Bean
-    public KafkaProducer<String, Observation> kafkaProducer() throws VcapEnvironmentException {
+    public KafkaProducer<String, List<Observation>> kafkaProducer() throws VcapEnvironmentException {
         try {
             if (serviceConfigProvider.isKafkaEnabled()) {
                 Map<String, Object> producerConfig = new HashMap<>();

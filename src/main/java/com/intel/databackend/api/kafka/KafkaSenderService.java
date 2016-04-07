@@ -38,7 +38,7 @@ import java.util.Properties;
 @Service
 public class KafkaSenderService implements KafkaService {
 
-    private KafkaProducer<String, Observation> kafkaProducer;
+    private KafkaProducer<String, List<Observation>> kafkaProducer;
 
     private static final Logger logger = LoggerFactory.getLogger(KafkaService.class);
 
@@ -48,7 +48,7 @@ public class KafkaSenderService implements KafkaService {
     private ServiceConfigProvider serviceConfigProvider;
 
     @Autowired
-    public KafkaSenderService(KafkaProducer<String, Observation> kafkaProducer) {
+    public KafkaSenderService(KafkaProducer<String, List<Observation>> kafkaProducer) {
         this.kafkaProducer = kafkaProducer;
     }
 
@@ -86,9 +86,8 @@ public class KafkaSenderService implements KafkaService {
     @Override
     public void send(List<Observation> observations) {
         if (kafkaProducer != null) {
-            observations.stream()
-                    .forEach(observation ->
-                            kafkaProducer.send(new ProducerRecord<>(topic, observation), getSendResultCallback()));
+            kafkaProducer.send(new ProducerRecord<>(topic, observations), getSendResultCallback());
+
         }
     }
 
