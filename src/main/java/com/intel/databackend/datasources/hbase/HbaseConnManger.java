@@ -46,9 +46,11 @@ class HbaseConnManger {
 
     public Connection create() throws IOException, LoginException {
         Configuration hbaseConfiguration = Configurations.newInstanceFromEnv().getServiceConfig(ServiceType.HBASE_TYPE).asHadoopConfiguration();
-        if (isKerberosEnabled(hbaseConfiguration)) {
-            try {
-                KerberosProperties kerberosProperties = serviceConfigProvider.getKerberosCredentials();
+        try {
+            KerberosProperties kerberosProperties = serviceConfigProvider.getKerberosCredentials();
+            if (isKerberosEnabled(hbaseConfiguration)) {
+
+
                 KrbLoginManager loginManager = KrbLoginManagerFactory.getInstance()
                         .getKrbLoginManagerInstance(kerberosProperties.getKdc(), kerberosProperties.getRealm());
                 Subject subject = loginManager.loginWithCredentials(kerberosProperties.getUser(),
@@ -56,11 +58,13 @@ class HbaseConnManger {
                 loginManager.loginInHadoop(subject, hbaseConfiguration);
 
                 return ConnectionFactory.createConnection(hbaseConfiguration, getUserFromSubject(hbaseConfiguration, subject));
-            } catch (VcapEnvironmentException e) {
-                throw new IOException(e);
+            } else {
+                return ConnectionFactory.createConnection(hbaseConfiguration, getNoKrbUserFromSubject(hbaseConfiguration, kerberosProperties.getUser()));
             }
+        } catch (VcapEnvironmentException e) {
+            throw new IOException(e);
         }
-        return ConnectionFactory.createConnection(hbaseConfiguration);
+
     }
 
     private static boolean isKerberosEnabled(Configuration configuration) {
@@ -70,5 +74,10 @@ class HbaseConnManger {
     private User getUserFromSubject(Configuration configuration, Subject subject) throws IOException {
         return UserProvider.instantiate(configuration)
                 .create(UserGroupInformation.getUGIFromSubject(subject));
+    }
+
+    private User getNoKrbUserFromSubject(Configuration configuration, String krbUser) throws IOException {
+        return UserProvider.instantiate(configuration)
+                .create(UserGroupInformation.createRemoteUser(krbUser));
     }
 }

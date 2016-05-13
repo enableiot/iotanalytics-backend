@@ -44,7 +44,7 @@ public class ServiceConfig implements ServiceConfigProvider {
     public static final String ZOOKEEPER_BROKER_URI = "zk.cluster";
     public static final String ZOOKEEPER_BROKER_PLAN = "plan";
 
-    public static final String KERBEROS_UPS_NAME = "kerberos-service";
+    public static final String KERBEROS_SERVICE_NAME = "kerberos";
     public static final String KRB_USER = "kuser";
     public static final String KRB_PASS = "kpassword";
     public static final String KRB_REALM = "krealm";
@@ -69,7 +69,7 @@ public class ServiceConfig implements ServiceConfigProvider {
         kafkaSettings = vcapReaderServices.getUserProvidedServiceCredentialsByName(KAFKA_UPS_NAME);
         zookeeperService = vcapReaderServices.getVcapServiceByType(ZOOKEEPER_BROKER_NAME);
         zookeeperCredentials = vcapReaderServices.getVcapServiceCredentialsByType(ZOOKEEPER_BROKER_NAME);
-        kerberosCredentials = vcapReaderServices.getUserProvidedServiceCredentialsByName(KERBEROS_UPS_NAME);
+        kerberosCredentials = vcapReaderServices.getVcapServiceCredentialsByType(KERBEROS_SERVICE_NAME);
     }
 
     @Override
@@ -124,10 +124,10 @@ public class ServiceConfig implements ServiceConfigProvider {
         KerberosProperties kerberosProperties = null;
         if (kerberosCredentials != null) {
             kerberosProperties = new KerberosProperties();
-            kerberosProperties.setKdc(getFieldValueFromJson(kerberosCredentials, KERBEROS_UPS_NAME, KRB_KDC, String.class));
-            kerberosProperties.setPassword(getFieldValueFromJson(kerberosCredentials, KERBEROS_UPS_NAME, KRB_PASS, String.class));
-            kerberosProperties.setUser(getFieldValueFromJson(kerberosCredentials, KERBEROS_UPS_NAME, KRB_USER, String.class));
-            kerberosProperties.setRealm(getFieldValueFromJson(kerberosCredentials, KERBEROS_UPS_NAME, KRB_REALM, String.class));
+            kerberosProperties.setKdc(getFieldValueFromJson(kerberosCredentials, KERBEROS_SERVICE_NAME, KRB_KDC, String.class));
+            kerberosProperties.setPassword(getFieldValueFromJson(kerberosCredentials, KERBEROS_SERVICE_NAME, KRB_PASS, String.class));
+            kerberosProperties.setUser(getFieldValueFromJson(kerberosCredentials, KERBEROS_SERVICE_NAME, KRB_USER, String.class));
+            kerberosProperties.setRealm(getFieldValueFromJson(kerberosCredentials, KERBEROS_SERVICE_NAME, KRB_REALM, String.class));
         }
         return kerberosProperties;
     }

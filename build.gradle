@@ -124,7 +124,7 @@ dependencies {
     compile "org.hamcrest:hamcrest-all:1.3"
     compile "com.btmatthews.hamcrest:hamcrest-matchers:1.0.1"
 
-    compile("org.trustedanalytics:hadoop-utils:0.5.12")
+    compile("org.trustedanalytics:hadoop-utils:0.6.11")
 
     /*
      To find proper version of Kafka for Cloudera please use following link:
