@@ -32,7 +32,7 @@ To install backend in your Trusted Analytics Platform space, login into TAP and 
 1. Create following user-provided services with properties filled with real values:
 
         cf cups kafka-ups -p "{\"topic\":\"example_topic_name\",\"enabled\":true,\"partitions\":1,\"replication\":1,\"timeout_ms\":10000}"
-        cf cups kerberos-service -p '{"kdc":"${KERBEROS_KDC}","kpassword":"${KERBEROS_USER_PASSWORD}","krealm":"${KERBEROS_REALM}","kuser":"${KERBEROS_USER_NAME}"}'
+        cf cs kerberos shared kerberos-service
         
 1. ./cf-deploy.sh
 1. Check logs and wait for application start.
