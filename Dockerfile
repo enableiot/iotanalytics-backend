@@ -10,4 +10,8 @@ ENV PATH=$PATH:$GRADLE_HOME/bin
 
 EXPOSE 8080
 
+ADD . /app
+
 WORKDIR /app
+
+RUN make build
