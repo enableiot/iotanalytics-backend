@@ -59,7 +59,7 @@ class HbaseConnManger {
 
                 return ConnectionFactory.createConnection(hbaseConfiguration, getUserFromSubject(hbaseConfiguration, subject));
             } else {
-                return ConnectionFactory.createConnection(hbaseConfiguration, getNoKrbUserFromSubject(hbaseConfiguration, kerberosProperties.getUser()));
+                return ConnectionFactory.createConnection(hbaseConfiguration);
             }
         } catch (VcapEnvironmentException e) {
             throw new IOException(e);
@@ -76,8 +76,8 @@ class HbaseConnManger {
                 .create(UserGroupInformation.getUGIFromSubject(subject));
     }
 
-    private User getNoKrbUserFromSubject(Configuration configuration, String krbUser) throws IOException {
-        return UserProvider.instantiate(configuration)
-                .create(UserGroupInformation.createRemoteUser(krbUser));
-    }
+    // private User getNoKrbUserFromSubject(Configuration configuration, String krbUser) throws IOException {
+    //     return UserProvider.instantiate(configuration)
+    //             .create(UserGroupInformation.createRemoteUser(krbUser));
+    // }
 }

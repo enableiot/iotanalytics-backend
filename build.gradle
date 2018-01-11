@@ -33,7 +33,6 @@ buildscript {
     }
 }
 
-
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
@@ -152,4 +151,3 @@ dependencies {
 
     pmd('net.sourceforge.pmd:pmd-core:5.4.1', 'net.sourceforge.pmd:pmd-java:5.4.1')
 }
-
